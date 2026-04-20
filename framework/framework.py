@@ -12,10 +12,16 @@ class Delegate:
         pass
 
     def raise_motion(self, motion):
-        motion.show_motion()
+        motion.claim()
 
     def raise_point(self, point):
-        point.show_point()
+        point.claim()
+
+    def present_amendment(self, amendment):
+        amendment.present()
+
+    def present_draft_resolution(self, draft_resolution):
+        draft_resolution.present()
 
     def make_speech(self, speech_duration: int):
         pass
@@ -46,15 +52,20 @@ MOTION_TYPES = [
     "moderated caucus",
     "unmoderated caucus",
     "introduce draft resolution",
-    "introduce amendment"
-    "close debate",
+    "introduce amendment" "close debate",
     "vote",
 ]
 
 
 class Motion:
     def __init__(
-        self, id: str, type: str, proposer: Delegate, parameters: dict, status: str, document: Optional[DraftResolution] | Optional[Amendment]
+        self,
+        id: str,
+        type: str,
+        proposer: Delegate,
+        parameters: dict,
+        status: str,
+        document: Optional[DraftResolution] | Optional[Amendment],
     ):
         self.id = id
         self.type = type
@@ -63,7 +74,7 @@ class Motion:
         self.document = document | None
         self.status = status
 
-    def show_motion(self):
+    def claim(self):
         return f"""
             Motion {self.id} to {self.type} claimed by {self.proposer}.
             Parameters: {self.parameters}
@@ -83,11 +94,11 @@ class Point:
         self.status = status
         self.content = content
 
-    def show_point(self):
+    def claim(self):
         return f"""
             Point {self.id} of {self.type} claimed by {self.proposer}: {self.content}
             """
-        
+
 
 VOTING_TYPES = ["procedural", "substantive"]
 
@@ -98,7 +109,7 @@ class Vote:
         id: str,
         topic: str,
         type: str,
-        supporting_document, 
+        supporting_document,
         delegates_refraining: list[Delegate],
         delegates_in_favor: list[Delegate],
         delegates_against: list[Delegate],
@@ -170,6 +181,22 @@ class DraftResolution:
         self.introduced = introduced
         self.passed = passed
 
+    def present(self):
+        self.introduced = True
+        return f""" 
+            Draft Resolution sponsored by {self.sponsors} on the topic of {self.topic}
+            -----------------------------------------------------------------------------
+            
+            Preambulatory Clauses : 
+            {self.preambulatory_clauses}
+
+
+            Operative clauses :
+            {self.operative_clauses}
+            
+            Signatories : {self.signatories}
+            """
+
 
 class Amendment:
     """change proposed to a draft resolution"""
@@ -180,14 +207,25 @@ class Amendment:
         target_resolution: DraftResolution,
         proposer: Delegate,
         clause_target_id: int,
-        amendment_type: str,
         new_text: str,
         is_friendly: bool,
+        status: str,
     ):
         self.id = id
         self.target_resolution = target_resolution
         self.proposer = proposer
         self.clause_target_id = clause_target_id
-        self.amendment_type = amendment_type
         self.new_text = new_text
         self.is_friendly = is_friendly
+        self.status = status
+
+    def present(self):
+        return f""" 
+            {self.is_friendly} amendment {self.id} proposed by {self.proposer} 
+            targetting resolution {self.target_resolution.id}
+            -----------------------------------------------------------------------------
+            
+            Target clause: {self.clause_target_id}
+
+            Replace clause by: {self.new_text}
+            """
