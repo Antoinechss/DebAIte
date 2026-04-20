@@ -1,5 +1,8 @@
+from typing import Optional
+
+
 class Delegate:
-    def __init__(self, id: str, name: str, country: str, context):
+    def __init__(self, id: str, name: str, country: str, context: str):
         self.id = id
         self.name = name
         self.country = country
@@ -8,19 +11,19 @@ class Delegate:
     def vote(self, topic):
         pass
 
-    def raise_motion():
-        pass
+    def raise_motion(self, motion):
+        motion.show_motion()
 
-    def raise_point():
-        pass
+    def raise_point(self, point):
+        point.show_point()
 
-    def make_speech():
+    def make_speech(self, speech_duration: int):
         pass
 
 
 class SpeakersList:
-    def __init__(self, queue: list[Delegate], speech_duration: int):
-        self.queue = queue
+    def __init__(self, speech_duration: int):
+        self.queue = []
         self.speech_duration = speech_duration
 
 
@@ -43,6 +46,7 @@ MOTION_TYPES = [
     "moderated caucus",
     "unmoderated caucus",
     "introduce draft resolution",
+    "introduce amendment"
     "close debate",
     "vote",
 ]
@@ -50,25 +54,40 @@ MOTION_TYPES = [
 
 class Motion:
     def __init__(
-        self, id: str, type: str, proposer: Delegate, parameters: dict, status: str
+        self, id: str, type: str, proposer: Delegate, parameters: dict, status: str, document: Optional[DraftResolution] | Optional[Amendment]
     ):
         self.id = id
         self.type = type
         self.proposer = proposer
-        self.parameters = parameters
+        self.parameters = parameters | None
+        self.document = document | None
         self.status = status
+
+    def show_motion(self):
+        return f"""
+            Motion {self.id} to {self.type} claimed by {self.proposer}.
+            Parameters: {self.parameters}
+            """
 
 
 POINT_TYPES = ["order", "inquiry"]
 
 
 class Point:
-    def __init__(self, id: str, proposer: Delegate, type: str, status: str):
+    def __init__(
+        self, id: str, proposer: Delegate, type: str, status: str, content: str
+    ):
         self.id = id
         self.proposer = proposer
         self.type = type
         self.status = status
+        self.content = content
 
+    def show_point(self):
+        return f"""
+            Point {self.id} of {self.type} claimed by {self.proposer}: {self.content}
+            """
+        
 
 VOTING_TYPES = ["procedural", "substantive"]
 
@@ -77,19 +96,23 @@ class Vote:
     def __init__(
         self,
         id: str,
+        topic: str,
         type: str,
+        supporting_document, 
         delegates_refraining: list[Delegate],
         delegates_in_favor: list[Delegate],
         delegates_against: list[Delegate],
     ):
         self.id = id
         self.type = type
+        self.topic = topic
         self.delegates_refraining = delegates_refraining
         self.refraining_count = len(delegates_refraining)
         self.delegates_in_favor = delegates_in_favor
         self.favor_count = len(delegates_in_favor)
         self.delegates_against = delegates_against
         self.against_count = len(delegates_against)
+        self.supporting_document = supporting_document
 
     def evaluate(self, type) -> bool:
         """Evaluate if a vote passes according to its type"""
