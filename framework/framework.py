@@ -1,22 +1,92 @@
+from mun import MUN
+from cognition.prompts import persona_context, generation_rules
+from cognition.engine import think
+
+
 class Delegate:
-    def __init__(self, id: str, name: str, country: str, context: str):
+    def __init__(self, id: str, name: str, country: str):
         self.id = id
         self.name = name
         self.country = country
-        self.context = context
 
-    def vote(self, vote):
+    def vote(self, vote, session: MUN):
         vote_brief = vote.brief()
-        response = f"LLM_ENGINE_RESPONSE {vote_brief}"
-        if response == "yes":
+
+        prompt = f"""
+            {persona_context(self, session)}
+
+            This is a voting procedure.
+
+            You are asked to vote on the following resolution:
+            {vote_brief}
+
+            Decide based on:
+            - your national interests
+            - geopolitical context
+            - the current state of the debate
+
+            You must return a JSON object with EXACTLY this format:
+            {{"vote": "yes"}}
+            OR
+            {{"vote": "no"}}
+            OR
+            {{"vote": "blank"}}
+
+            {generation_rules}
+            """
+
+        response = think(prompt)
+        delegate_vote = response["vote"]
+
+        if delegate_vote == "yes":
             vote.delegates_in_favor.append(self.id)
-        if response == "no":
+        if delegate_vote == "no":
             vote.delegates_against.append(self.id)
-        if response == "blank":
+        if delegate_vote == "blank":
             vote.delegates_refraining.append(self.id)
+        else:  # Default blank vote
+            vote.delegates_refraining.append(self.id)
+
+    def make_speech(self, topic_prompt: str, speech_duration: int, session: MUN):
+        prompt = f"""
+            {persona_context(self, session)}
+
+            Representing the delegation of {self.country}, deliver a speech to the committee. 
+            The context and instructions of the speech is the following:
+            {topic_prompt} 
+
+            Built it based on:
+            - your national interests
+            - geopolitical context
+            - the current state of the debate and the current motion it happens in
+
+            You must return a JSON object with EXACTLY this format:
+            {{"speech": "your_speech"}}
+
+            The speech should be {speech_duration} words MAX. 
+
+            {generation_rules}
+            """
+        response = think(prompt)
+        speech = response["speech"]
+        return speech
 
     def raise_motion(self, motion):
         motion.claim()
+
+    def decide(self, proposal):
+        prompt = f"""
+            {proposal}
+            You must return a JSON object with EXACTLY this format:
+            {{"decision": "yes"}}
+            OR
+            {{"decision": "no"}}
+            
+            {generation_rules}
+            """
+        response = think(prompt)
+        delegate_decision = response["decision"]
+        return delegate_decision
 
     def raise_point(self, point):
         point.claim()
@@ -27,9 +97,6 @@ class Delegate:
     def present_draft_resolution(self, draft_resolution):
         draft_resolution.present()
 
-    def make_speech(self, speech_duration: int):
-        pass
-
 
 class SpeakersList:
     def __init__(self, speech_duration: int):
@@ -38,15 +105,37 @@ class SpeakersList:
 
 
 class ModeratedCaucus:
-    def __init__(self, topic: str, num_speakers: int, speech_duration: int):
+    def __init__(
+        self, topic: str, proposer: Delegate, num_speakers: int, speech_duration: int
+    ):
         self.topic = topic
+        self.proposer = proposer
         self.num_speakers = num_speakers
         self.speech_duration = speech_duration
+        self.speeches = {}
+
+    def present(self):
+        return f"""
+        Moderated Caucus on the topic of {self.topic} proposed by {self.proposer.country}
+        {self.num_speakers} speakers for {self.speech_duration} speaking time
+
+        Speeches already given (empty if caucus has not started yet): 
+        {self.speeches}
+        """
 
 
 class UnmoderatedCaucus:
-    def __init__(self, duration: int):
+    def __init__(self, duration: int, topic: str, proposer: Delegate):
+        self.topic = topic
         self.duration = duration
+        self.blocs = {}
+        self.proposer = proposer
+    
+    def present(self): 
+        return f"""
+        Unmoderated Caucus on the topic of {self.topic} proposed by {self.proposer.country}. 
+        Duration of free debate session : {self.duration}
+        """ 
 
 
 # ------------ PROCEDURES ------------
@@ -85,23 +174,23 @@ class Motion:
             """
 
 
-POINT_TYPES = ["order", "inquiry"]
+# POINT_TYPES = ["order", "inquiry"]
 
 
-class Point:
-    def __init__(
-        self, id: str, proposer: Delegate, type: str, status: str, content: str
-    ):
-        self.id = id
-        self.proposer = proposer
-        self.type = type
-        self.status = status
-        self.content = content
+# class Point:
+#     def __init__(
+#         self, id: str, proposer: Delegate, type: str, status: str, content: str
+#     ):
+#         self.id = id
+#         self.proposer = proposer
+#         self.type = type
+#         self.status = status
+#         self.content = content
 
-    def claim(self):
-        return f"""
-            Point {self.id} of {self.type} claimed by {self.proposer}: {self.content}
-            """
+#     def claim(self):
+#         return f"""
+#             Point {self.id} of {self.type} claimed by {self.proposer}: {self.content}
+#             """
 
 
 VOTING_TYPES = ["procedural", "substantive"]
@@ -147,14 +236,15 @@ class Vote:
                 self.favor_count + self.against_count + self.refraining_count
             )
 
-    def log(self, session_log):
+    def log(self, session_log, timestamp):
         vote_brief = self.brief()
         issue = self.evaluate()
         session_log.write(
             f"""
-            VOTE:
-            {vote_brief}
-            issue: {issue}
+            Time: {timestamp}
+                VOTE:
+                {vote_brief}
+                issue: {issue}
             """
         )
 
