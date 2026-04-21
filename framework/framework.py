@@ -1,6 +1,3 @@
-from typing import Optional
-
-
 class Delegate:
     def __init__(self, id: str, name: str, country: str, context: str):
         self.id = id
@@ -8,8 +5,15 @@ class Delegate:
         self.country = country
         self.context = context
 
-    def vote(self, topic):
-        pass
+    def vote(self, vote):
+        vote_brief = vote.brief()
+        response = f"LLM_ENGINE_RESPONSE {vote_brief}"
+        if response == "yes":
+            vote.delegates_in_favor.append(self.id)
+        if response == "no":
+            vote.delegates_against.append(self.id)
+        if response == "blank":
+            vote.delegates_refraining.append(self.id)
 
     def raise_motion(self, motion):
         motion.claim()
@@ -65,7 +69,7 @@ class Motion:
         proposer: Delegate,
         parameters: dict,
         status: str,
-        document: Optional[DraftResolution] | Optional[Amendment],
+        document,
     ):
         self.id = id
         self.type = type
@@ -110,9 +114,9 @@ class Vote:
         topic: str,
         type: str,
         supporting_document,
-        delegates_refraining: list[Delegate],
-        delegates_in_favor: list[Delegate],
-        delegates_against: list[Delegate],
+        delegates_refraining: list[str],
+        delegates_in_favor: list[str],
+        delegates_against: list[str],
     ):
         self.id = id
         self.type = type
@@ -125,6 +129,13 @@ class Vote:
         self.against_count = len(delegates_against)
         self.supporting_document = supporting_document
 
+    def brief(self):
+        brief = f"""
+        {self.type} vote on the topic: {self.topic}
+        Supporting documents: {self.supporting_document.present()}
+        """
+        return brief
+
     def evaluate(self, type) -> bool:
         """Evaluate if a vote passes according to its type"""
         if type == "procedural":  # Simple majority
@@ -135,6 +146,17 @@ class Vote:
             return self.favor_count >= 0.66 * (
                 self.favor_count + self.against_count + self.refraining_count
             )
+
+    def log(self, session_log):
+        vote_brief = self.brief()
+        issue = self.evaluate()
+        session_log.write(
+            f"""
+            VOTE:
+            {vote_brief}
+            issue: {issue}
+            """
+        )
 
 
 # ------------ DOCUMENTS ------------
