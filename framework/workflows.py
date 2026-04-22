@@ -3,10 +3,16 @@ from framework.framework import (
     Vote,
     ModeratedCaucus,
     UnmoderatedCaucus,
+    WorkingPaper
 )
 from framework.mun import MUN
 from cognition.prompts import persona_context, generation_rules
 from cognition.engine import think
+from pathlib import Path
+
+
+def create_session_logs():
+    Path("session_logs").mkdir(exist_ok=True)
 
 
 def general_debate():
@@ -117,7 +123,6 @@ def process_unmoderated_caucus(caucus: UnmoderatedCaucus, session: MUN):
         response = think(position_prompt)
         position = response["position"]
         caucus.positions[delegate.country] = position
-
     print(f"Gathered initial positions : {caucus.positions}")
 
     print(" ======= Blocs formation ======= ")
@@ -149,16 +154,77 @@ def process_unmoderated_caucus(caucus: UnmoderatedCaucus, session: MUN):
         bloc_requests[delegate.country] = bloc_choice
 
     print(" ======== Blocs formation by the Chair ======== ")
-    print(f"Delegates have made the following wishes regarding their blocs: {bloc_requests}")
+    print(
+        f"Delegates have made the following wishes regarding their blocs: {bloc_requests}"
+    )
 
     selected_blocs = input(
-                """Manually form blocs by submitting a dictionary in the form: 
+        """Manually form blocs by submitting a dictionary in the form: 
                 "B1": ["Country1","Country2",...]
                 >>>"""
     )
-    caucus.make_blocs_brief(selected_blocs)
+    caucus.make_blocs_brief(selected_blocs, session)
 
     print(" ======== Free negociations within blocs ======== ")
     T = caucus.duration
     print(f"Running {T} thinking iterations per bloc")
+    for t in range(T):
+        for bloc in caucus.blocs_brief:
+            for delegate in bloc["members"]:
+                contribution_prompt = f"""
+                    {persona_context(delegate, session)}
+
+                    You are currently discussing with your bloc within the following unmoderated caucus:
+                    {caucus.present()}
+
+                    Members of your bloc are : {bloc["members"]}
+
+                    The following ideas, agreements, conflicts have already been shared:
+                    {caucus.blocs_brief[bloc["id"]]}
+
+                    You can contribute to the discussion in one of the 3 forms:
+                    - Propose a new idea
+                    - Support an idea
+                    - Oppose an idea
+
+                    You must return a JSON object with EXACTLY this format:
+                    {{"type": "propose" | "support" | "oppose",
+                      "content": "your country + content of your contribution"}}
+
+                    Keep it short (1-2 sentences max), focused on the caucus topic and targetted.
+                    
+                    {generation_rules}
+
+                """
+                action = think(contribution_prompt)
+                caucus.update_bloc_state(bloc["id"], action)
+        
+    print(" ======== Building working papers with a neutral LLM agent ======== ")
+    print(" Logging papers in session memory ")
+    working_papers = []
+    for bloc in caucus.blocs_brief: 
+        bloc_id = bloc['id']
+        print(f"Building paper for bloc {bloc_id}")
+        paper_id = "P"+bloc_id
+        paper = WorkingPaper(id=paper_id)
+        paper.build_paper(caucus.blocs_brief, bloc_id)
+        paper.display()
+        print("Logging paper in session memory")
+        #session.log.write(paper)
+        working_papers.append(paper)
     
+    print(" ======== Draft resolutions ======== ")
+    print("Selecting working papers")
+    for paper in working_papers: 
+        draft = paper.evaluate()
+        if not draft:
+            print(f"Paper {paper.id} not retained for draft resolution")
+        if draft:
+            print(f"Drafting {paper.id} into resolution")
+            # TODO : build resolution
+
+
+    
+    
+    
+

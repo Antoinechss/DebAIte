@@ -106,7 +106,12 @@ class SpeakersList:
 
 class ModeratedCaucus:
     def __init__(
-        self, id, topic: str, proposer: Delegate, num_speakers: int, speech_duration: int
+        self,
+        id,
+        topic: str,
+        proposer: Delegate,
+        num_speakers: int,
+        speech_duration: int,
     ):
         self.id = id
         self.topic = topic
@@ -134,21 +139,43 @@ class UnmoderatedCaucus:
         self.proposer = proposer
         self.temp_memory = {}
         self.positions = {}
-    
-    def present(self): 
+
+    def present(self):
         return f"""
         Unmoderated Caucus on the topic of {self.topic} proposed by {self.proposer.country}. 
         Duration of free debate session : {self.duration}
-        """ 
-    
-    def make_blocs_brief(self, selected_blocs: dict):
-        for bloc_id, members in selected_blocs.items(): 
+        """
+
+    def make_blocs_brief(self, selected_blocs: dict, session: MUN):
+        print("Building bloc brief")
+        for bloc_id, member_countries in selected_blocs.items():
             self.blocs_brief[bloc_id] = {
-                "members": members,
+                "id": bloc_id,
+                "members": [
+                    delegate
+                    for delegate in session.committee
+                    if delegate.country in member_countries
+                ],
                 "positions": {
-                    country: self.positions[country] for country in members
-                }
+                    country: self.positions[country] for country in member_countries
+                },
+                "ideas": [],
+                "agreements": [],
+                "conflicts": [],
             }
+
+    def update_bloc_state(self, bloc_id: str, action: dict):
+        action_type = action["type"]
+        content = action["content"]
+        bloc_brief = self.blocs_brief[bloc_id]
+
+        if action_type == "propose":
+            bloc_brief["ideas"].append(content)
+        if action_type == "support":
+            bloc_brief["agreements"].append(content)
+        if action_type == "oppose":
+            bloc_brief["conflicts"].append(content)
+
 
 # ------------ PROCEDURES ------------
 
@@ -270,16 +297,85 @@ class WorkingPaper:
     def __init__(
         self,
         id: str,
-        sponsors: list[Delegate],
-        signatories: list[Delegate],
-        clauses: list[str],
-        status: str,
     ):
         self.id = id
-        self.sponsors = sponsors
-        self.signatories = signatories
-        self.clauses = clauses
-        self.status = status
+        self.title = ""
+        self.sponsors = []
+        self.preambulatory_clauses = []
+        self.operative_clauses = []
+    
+    def build_paper(self, blocs_brief: dict, bloc_id: str):
+        
+        prompt = f"""
+        You are a UN drafting expert
+        Based on the following agreed elements within the bloc of countries: {blocs_brief[bloc_id]["members"]}
+        Ideas: 
+        {blocs_brief[bloc_id]["ideas"]}
+        Agreements: 
+        {blocs_brief[bloc_id]["agreements"]}
+        Write a working paper using formal UN style. 
+
+        - Stay true to the content given 
+        - Do not invent additional components
+        - Be concise and factual
+
+        You must return a JSON object with EXACTLY this format:
+        {{
+        "title": your_title,
+        "preambulatory_clauses": [clause1, clause2...],
+        "operative_clauses": [clause1, clause2...]
+        }}
+
+        {generation_rules}
+        """
+
+        response = think(prompt)
+        self.title = response["title"]
+        self.preambulatory_clauses = response["preambulatory_clauses"]
+        self.operative_clauses = response["operative_clauses"]
+        self.sponsors = blocs_brief[bloc_id]["members"]
+    
+    def display(self):
+        return f"""
+        Working paper n° {self.id}
+
+        {self.title}
+
+        Sponsors: {self.sponsors}
+
+        ------------------------------------------------------
+        Preambulatory Clauses: 
+
+        {self.preambulatory_clauses}
+
+        Operative Clauses: 
+
+        {self.operative_clauses}
+        """
+    
+    def evaluate(self): 
+        prompt = f"""
+            You are a UN committee chair
+            Evaluate the following working paper established within a bloc during unmoderated caucus: 
+
+            {self.display()}
+
+            Decide if it is sufficiently developed to be introduced as a draft resolution
+            Criterias: 
+            - Contains clear operative clauses 
+            - Coherent and structured 
+            - Actionable measures 
+
+            You must return a JSON object with EXACTLY this format:
+            {{"valid": True}}
+            OR
+            {{"valid": False}}
+
+            {generation_rules}
+        """
+        response = think(prompt)
+        decision = response["valid"]
+        return decision
 
 
 class DraftResolution:
@@ -293,7 +389,6 @@ class DraftResolution:
         signatories: list[Delegate],
         preambulatory_clauses: list[(int, str)],
         operative_clauses: list[(int, str)],
-        introduced: bool,
         passed: bool | None,
     ):
         self.id = id
@@ -302,7 +397,6 @@ class DraftResolution:
         self.signatories = signatories
         self.preambulatory_clauses = preambulatory_clauses
         self.operative_clauses = operative_clauses
-        self.introduced = introduced
         self.passed = passed
 
     def present(self):

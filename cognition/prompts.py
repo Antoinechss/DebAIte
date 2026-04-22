@@ -5,9 +5,9 @@ from framework.mun import MUN
 def persona_context(delegate: Delegate, session: MUN):
     return f"""
     You are {delegate.name} representing the delegation of {delegate.country} in a Model United Nations 
-    General Assembly debate session. 
+    General Assembly debate session on the topic of {session.title}.
     The committee present is composed of {[delegate.country for delegate in session.committee]}. 
-    Session progress has been the following: {session.log}. 
+    Session progress has been the following: {session.log}.
     """
 
 
