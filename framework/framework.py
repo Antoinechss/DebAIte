@@ -106,8 +106,9 @@ class SpeakersList:
 
 class ModeratedCaucus:
     def __init__(
-        self, topic: str, proposer: Delegate, num_speakers: int, speech_duration: int
+        self, id, topic: str, proposer: Delegate, num_speakers: int, speech_duration: int
     ):
+        self.id = id
         self.topic = topic
         self.proposer = proposer
         self.num_speakers = num_speakers
@@ -125,18 +126,29 @@ class ModeratedCaucus:
 
 
 class UnmoderatedCaucus:
-    def __init__(self, duration: int, topic: str, proposer: Delegate):
+    def __init__(self, id, duration: int, topic: str, proposer: Delegate):
+        self.id = id
         self.topic = topic
         self.duration = duration
-        self.blocs = {}
+        self.blocs_brief = {}
         self.proposer = proposer
+        self.temp_memory = {}
+        self.positions = {}
     
     def present(self): 
         return f"""
         Unmoderated Caucus on the topic of {self.topic} proposed by {self.proposer.country}. 
         Duration of free debate session : {self.duration}
         """ 
-
+    
+    def make_blocs_brief(self, selected_blocs: dict):
+        for bloc_id, members in selected_blocs.items(): 
+            self.blocs_brief[bloc_id] = {
+                "members": members,
+                "positions": {
+                    country: self.positions[country] for country in members
+                }
+            }
 
 # ------------ PROCEDURES ------------
 
