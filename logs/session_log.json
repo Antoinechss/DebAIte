@@ -1,0 +1,25 @@
+{
+    "meta": {
+        "committee_name": "UN General Assembly",
+        "topic": "",
+        "current_phase": "", 
+        "starting_time": "",
+        "current_time": ""
+    },
+    "committee": {
+        "delegates": {}
+    }, 
+    "general_speakers_list": {
+        "speeches": {}  
+    },
+    "moderated_caucuses": {
+    },
+    "unmoderated_caucuses": {
+    }, 
+    "resolutions": {
+    },
+    "activity": {
+    }, 
+    "votings": {
+    }
+}

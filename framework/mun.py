@@ -26,3 +26,6 @@ class MUN:
         Members present in the committee are: {self.committee}
         """"
     
+    def build_log(self):
+        pass
+    

@@ -8,11 +8,7 @@ from framework.framework import (
 from framework.mun import MUN
 from cognition.prompts import persona_context, generation_rules
 from cognition.engine import think
-from pathlib import Path
 
-
-def create_session_logs():
-    Path("session_logs").mkdir(exist_ok=True)
 
 # LATER ON IMPLEMENT AMENDMENTS
 def vote_draft_resolution(resolution: DraftResolution, session: MUN):
@@ -303,7 +299,6 @@ def general_speakers_list(session: MUN):
     print(" ===== Closing General Speakers List, reopening if no motions show ======== ")
     general_debate()
     
-
 
 def general_debate(session: MUN):
 
