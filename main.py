@@ -4,7 +4,7 @@ from framework.mun import MUN
 from committee import committee
 from datetime import datetime
 from framework.workflows import general_debate
-from logs.log import create_session_logs
+from logs.log import init_log
 
 SESSION_TITLE = "Finding compromise for the ongoing war in Iran"
 
@@ -22,9 +22,9 @@ if __name__ == "main":
     print(session.intro())
     # -----------------------------
 
-    print("Creating empty directory for session logs and memory")
+    print("Creating session log")
     
-    create_session_logs()
+    init_log(session)
 
     while session.state != "END":
         general_debate(session)

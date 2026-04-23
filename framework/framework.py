@@ -9,6 +9,13 @@ class Delegate:
         self.name = name
         self.country = country
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "country": self.country
+        }
+
     def motion(self, session: MUN):
         choose_prompt = f"""
 
