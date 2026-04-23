@@ -14,16 +14,11 @@ from pathlib import Path
 def create_session_logs():
     Path("session_logs").mkdir(exist_ok=True)
 
-
-def general_debate():
-    pass
-
-
 # LATER ON IMPLEMENT AMENDMENTS
-def process_draft_resolution(resolution: DraftResolution, session: MUN):
+def vote_draft_resolution(resolution: DraftResolution, session: MUN):
 
     vote = Vote(
-        id="v" + session.time,
+        id="V" + session.time,
         topic="Draft Resolution",
         type="substantive",
         supporting_document=resolution,
@@ -208,7 +203,7 @@ def process_unmoderated_caucus(caucus: UnmoderatedCaucus, session: MUN):
         paper_id = "P"+bloc_id
         paper = WorkingPaper(id=paper_id)
         paper.build_paper(caucus.blocs_brief, bloc_id)
-        paper.display()
+        paper.present()
         print("Logging paper in session memory")
         #session.log.write(paper)
         working_papers.append(paper)
@@ -221,10 +216,153 @@ def process_unmoderated_caucus(caucus: UnmoderatedCaucus, session: MUN):
             print(f"Paper {paper.id} not retained for draft resolution")
         if draft:
             print(f"Drafting {paper.id} into resolution")
-            # TODO : build resolution
+            resolution_id = "DR"+{paper.id}
+            resolution = DraftResolution(id=resolution_id)
+            resolution.build_from_paper(paper)
+            resolution.present()
+    
+    print(" ======= End of the Unmoderated caucus, back to general debate ======= ")
+    general_debate()
 
 
+def general_speakers_list(session: MUN):
+    print(" GENERAL SPEAKERS LIST ")
+    print("Reopening General Speakers List")
+    general_speakers_list = session.general_speakers_list
+
+    print(" ======== Updating queue with new voluntary speakers ======= ")
+    for delegate in session.committee:
+        if delegate in general_speakers_list.queue:
+            removal_prompt = f"""
+                {persona_context(delegate, session)}
+
+                The general speakers list has been reopened and you are in the queue of voluntary speakers. 
+                Based on the state of the debate, your national interests and your ideas, 
+                you can be removed (exceptional move) from this list.
+
+                Choose if you want to stay or be removed from the list before delegates take the floor.
+
+                You must return a JSON object with EXACTLY this format:
+                {{"remove": True}}
+                OR 
+                {{"remove": False}}
+
+                {generation_rules}
+                """
+            response = think(removal_prompt)
+            remove_delegate = response["remove"]
+            if remove_delegate:
+                general_speakers_list.queue.remove(delegate)
+        else: 
+            invitation_prompt = f"""
+                {persona_context(delegate, session)}
+
+                The general speakers list has been reopened and you are asked if you would like 
+                to be added to the speakers queue. Reason based on the current state of the debate,
+                your national interest and current ideas you could express. 
+
+                You must return a JSON object with EXACTLY this format:
+                {{"add": True}}
+                OR 
+                {{"add": False}}
+
+                {generation_rules}
+                """
+            response = think(invitation_prompt)
+            add_delegate = response["add"]
+            if add_delegate:
+                general_speakers_list.queue.append(delegate)
+
+    print(" ======== Running half of list before taking other motions ======= ")
+
+    if len(general_speakers_list.queue) < 3: 
+        print("Not enough speakers to run General Speakers List")
+        general_debate()
+    else:
+        num_speeches = len(general_speakers_list.queue)//2
+        num_given_speeches = 0
+        past_speeches = {}
+        while num_given_speeches < num_speeches: 
+            delegate = general_speakers_list.queue[0]
+            print(f"Delegation of {delegate.country} takes the floor")
+            gsl_prompt = f"""
+                This speech is part of the general speakers list. 
+                It needs to be closely linked to the history of the debate, 
+                motions passed, unmods negociations and reflect your positions. 
+
+                The previous speeches have been the following: 
+
+                {past_speeches}
+
+                You can respond to, trigger or comment those speeches if you feel it is pertinent. 
+            """
+            speech = delegate.make_speech(topic_prompt=gsl_prompt, speech_duration=200, session=session)
+            print(speech)
+            past_speeches[delegate.country] = speech
+
+    print(" ===== Closing General Speakers List, reopening if no motions show ======== ")
+    general_debate()
     
+
+
+def general_debate(session: MUN):
+
+    print("==== Gathering delegate motion claims ====")
+    motion_claims = {}
+    for delegate in session.committee: 
+        delegate_claim = delegate.motion(session)
+        motion_claims[delegate.country] = delegate_claim
+    print(motion_claims)
+
+    print("==== Chair filters valid motions ====")
+    valid_motions = input("""
+        Send subset of valid motions in the format of a dict by removing unwanted motions from the 
+        motion_claims dict 
+        >>>""")
     
+    if len(valid_motions) == 0: 
+        print("No valid motions at this time, opening general speakers list default")
+        general_speakers_list(session)
     
+    if len(valid_motions) > 0:
+        print("==== Voting on proposed motions ====")
+        for delegate in session.committee:
+            valid_motions = delegate.vote_motions(valid_motions)
+        proposing_country, motion = max(
+            valid_motions.items(),
+            key=lambda item: item[1]["vote_score"]
+        )
+
+        print(f"Running motion proposed by {proposing_country}")
+        
+        if motion["type"] == "unmod":
+            caucus = UnmoderatedCaucus(id="UMC"+session.time,
+                                       topic=motion["parameters"]["topic"],
+                                       proposer=next(d for d in session.committee if d.country == proposing_country))
+            process_unmoderated_caucus(caucus, session)
+        
+        if motion["type"] == "mod":
+            caucus = ModeratedCaucus(id="MC"+session.time,
+                                     topic=motion["parameters"]["topic"],
+                                     proposer=next(d for d in session.committee if d.country == proposing_country),
+                                     num_speakers=motion["parameters"]["num_speakers"],
+                                     speech_duration=motion["parameters"]["speech_duration"])
+            process_moderated_caucus(caucus, session)
+
+        if motion["type"] == "general_speakers_list":
+            general_speakers_list(session)
+
+        if motion["type"] == "present_resolution":
+            pass
+
+        if motion["type"] == "vote_resolution":
+            resolution_id = motion["parameters"]["resolution_id"] 
+            resolution = next(r for r in session.resolutions if r.id == resolution_id))
+            vote_draft_resolution(resolution, session) 
+
+        if motion["type"] == "end":
+            print("======= End of the MUN session =======")
+            session.state = "END"
+
+        
 

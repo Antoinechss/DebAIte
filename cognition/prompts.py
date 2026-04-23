@@ -21,3 +21,23 @@ generation_rules = """
 
             If your output does not follow this format, your reponse will be discarded.
             """
+
+motion_submission_rules = """
+Follow EXACTLY this format for your output:
+
+- No motion to propose: set "type" and "parameters" to None
+- Motion for Unmoderated Caucus:
+    {"type": "unmod", "parameters": {"topic": your topic (str)}}
+- Motion for Moderated Caucus:
+    {"type": "mod", "parameters": {"topic": your topic (str),
+                                   "num_speakers": number of speakers (int),
+                                   "speech_duration": number of max words per speech (int)}}
+- Motion to go through General Speakers List:
+    {"type": "general_speakers_list", "parameters": None}
+- Motion to present a draft resolution:
+    {"type": "present_resolution", "parameters": {"resolution_id": id of the resolution}}
+- Motion to vote on resolution:
+    {"type": "vote_resolution", "parameters": {"resolution_id": id of the resolution}}
+- Motion to end the session:
+    {"type": "end", "parameters": None}
+"""

@@ -3,6 +3,7 @@
 from framework.mun import MUN
 from committee import committee
 from datetime import datetime
+from framework.workflows import general_debate
 
 SESSION_TITLE = "Finding compromise for the ongoing war in Iran"
 
@@ -17,6 +18,9 @@ if __name__ == "main":
                   agenda=[],
                   log={})
     print("Session Opened")
+    print(session.intro())
     # -----------------------------
 
-    
+    while session.state != "END":
+        general_debate(session)
+

@@ -1,5 +1,5 @@
 from mun import MUN
-from cognition.prompts import persona_context, generation_rules
+from cognition.prompts import persona_context, generation_rules, motion_submission_rules
 from cognition.engine import think
 
 
@@ -9,7 +9,32 @@ class Delegate:
         self.name = name
         self.country = country
 
+    def motion(self, session: MUN):
+        choose_prompt = f"""
+
+        {persona_context(self, session)}
+
+        Chair asks "Are there any motions on the floor ?"
+        Based on your current incentives, the history of the debate, your objectives for the session, 
+        choose if you want to submit a motion proposition, and in this case give its parameters. 
+
+        You must return a JSON object with EXACTLY this format:
+        {{"type": str | None,
+          "parameters": dict | None, 
+          "vote_score": O
+        }}
+
+        Motion types and parameters should STRICTLY follow this format: 
+        {motion_submission_rules}
+
+        {generation_rules}
+        """
+        response = think(choose_prompt)
+
+        return response
+
     def vote(self, vote, session: MUN):
+    
         vote_brief = vote.brief()
 
         prompt = f"""
@@ -71,9 +96,6 @@ class Delegate:
         speech = response["speech"]
         return speech
 
-    def raise_motion(self, motion):
-        motion.claim()
-
     def decide(self, proposal):
         prompt = f"""
             {proposal}
@@ -88,18 +110,50 @@ class Delegate:
         delegate_decision = response["decision"]
         return delegate_decision
 
-    def raise_point(self, point):
-        point.claim()
-
     def present_amendment(self, amendment):
         amendment.present()
 
     def present_draft_resolution(self, draft_resolution):
         draft_resolution.present()
 
+    def vote_motions(self, motions: dict, session: MUN): 
+        """
+        Delegate sees : 
+        motions = {'country1': {"type": str, "parameters": dict | None, "vote_score": O}, 
+                    'country2': {"type": str, "parameters": dict | None, "vote_score": O}}
+        And votes for the motions he wants to be realised
+        Returns the updated dict of motions
+        """
+        vote_prompt = f"""{persona_context(self, session)}
+
+        Chair has asked for motion claims on the floor and the following motions have been proposed: 
+        {motions}
+
+        Vote based on your national interests and the topics you might want to discuss (or avoid), 
+        the current history of the debate and the geopolitical context. 
+        Some common sense to make your vote: 
+        - Prioritise presentation of resolutions if there has previously been an unmod
+        - Prioritise mods or general speakers list if early in the debate 
+        - Prioritise voting of resolutions if it has previously been presented 
+        - Unmods are more constructive when they come after a mod
+        - End the session only when really feeling like there has been enough discussion
+
+        You must return a JSON object with EXACTLY this format:
+        {{"supported_motions": ['country1', 'country3', ...]}}
+        i.e. a dict with the list of countries (with correct orthograph) you support the motions. 
+        {generation_rules}
+        """
+        response = think(vote_prompt)
+        supported_motions = response["supported_motions"]
+        # Updating motions dict: 
+        for country in supported_motions: 
+            motions[country]["vote_score"] += 1
+        
+        return motions
+
 
 class SpeakersList:
-    def __init__(self, speech_duration: int):
+    def __init__(self, speech_duration: int | None):
         self.queue = []
         self.speech_duration = speech_duration
 
@@ -131,10 +185,10 @@ class ModeratedCaucus:
 
 
 class UnmoderatedCaucus:
-    def __init__(self, id, duration: int, topic: str, proposer: Delegate):
+    def __init__(self, id, topic: str, proposer: Delegate):
         self.id = id
         self.topic = topic
-        self.duration = duration
+        self.duration = 30
         self.blocs_brief = {}
         self.proposer = proposer
         self.temp_memory = {}
@@ -143,7 +197,7 @@ class UnmoderatedCaucus:
     def present(self):
         return f"""
         Unmoderated Caucus on the topic of {self.topic} proposed by {self.proposer.country}. 
-        Duration of free debate session : {self.duration}
+        Duration of free debate session : {self.duration} dialogue iterations. 
         """
 
     def make_blocs_brief(self, selected_blocs: dict, session: MUN):
@@ -182,7 +236,6 @@ class UnmoderatedCaucus:
 MOTION_TYPES = [
     "open speakers list",
     "moderated caucus",
-    "unmoderated caucus",
     "introduce draft resolution",
     "introduce amendment" "close debate",
     "vote",
@@ -205,31 +258,6 @@ class Motion:
         self.parameters = parameters | None
         self.document = document | None
         self.status = status
-
-    def claim(self):
-        return f"""
-            Motion {self.id} to {self.type} claimed by {self.proposer}.
-            Parameters: {self.parameters}
-            """
-
-
-# POINT_TYPES = ["order", "inquiry"]
-
-
-# class Point:
-#     def __init__(
-#         self, id: str, proposer: Delegate, type: str, status: str, content: str
-#     ):
-#         self.id = id
-#         self.proposer = proposer
-#         self.type = type
-#         self.status = status
-#         self.content = content
-
-#     def claim(self):
-#         return f"""
-#             Point {self.id} of {self.type} claimed by {self.proposer}: {self.content}
-#             """
 
 
 VOTING_TYPES = ["procedural", "substantive"]
@@ -303,19 +331,19 @@ class WorkingPaper:
         self.sponsors = []
         self.preambulatory_clauses = []
         self.operative_clauses = []
-    
+
     def build_paper(self, blocs_brief: dict, bloc_id: str):
-        
+
         prompt = f"""
         You are a UN drafting expert
         Based on the following agreed elements within the bloc of countries: {blocs_brief[bloc_id]["members"]}
-        Ideas: 
+        Ideas:
         {blocs_brief[bloc_id]["ideas"]}
-        Agreements: 
+        Agreements:
         {blocs_brief[bloc_id]["agreements"]}
-        Write a working paper using formal UN style. 
+        Write a working paper using formal UN style.
 
-        - Stay true to the content given 
+        - Stay true to the content given
         - Do not invent additional components
         - Be concise and factual
 
@@ -334,8 +362,8 @@ class WorkingPaper:
         self.preambulatory_clauses = response["preambulatory_clauses"]
         self.operative_clauses = response["operative_clauses"]
         self.sponsors = blocs_brief[bloc_id]["members"]
-    
-    def display(self):
+
+    def present(self):
         return f"""
         Working paper n° {self.id}
 
@@ -352,8 +380,8 @@ class WorkingPaper:
 
         {self.operative_clauses}
         """
-    
-    def evaluate(self): 
+
+    def evaluate(self):
         prompt = f"""
             You are a UN committee chair
             Evaluate the following working paper established within a bloc during unmoderated caucus: 
@@ -384,25 +412,49 @@ class DraftResolution:
     def __init__(
         self,
         id: str,
-        topic: str,
-        sponsors: list[Delegate],
-        signatories: list[Delegate],
-        preambulatory_clauses: list[(int, str)],
-        operative_clauses: list[(int, str)],
-        passed: bool | None,
     ):
         self.id = id
-        self.topic = topic
-        self.sponsors = sponsors
-        self.signatories = signatories
-        self.preambulatory_clauses = preambulatory_clauses
-        self.operative_clauses = operative_clauses
-        self.passed = passed
+        self.title = ""
+        self.sponsors = []
+        self.signatories = []
+        self.preambulatory_clauses = []
+        self.operative_clauses = []
+        self.passed = None
+
+    def build_from_paper(self, paper: WorkingPaper):
+        prompt = f"""
+            You are a UN redaction expert in a Model United Nations Debate.
+            During unmoderated caucus, bloc of country has put together the following working paper:
+            {paper.present()}
+            Formalise it into a draft resolution using formal UN style
+            
+            - Stay true to the content given 
+            - Do not invent additional components
+            - Be concise and factual
+
+            You must return a JSON object with EXACTLY this format:
+            {{
+            "title": your_title,
+            "sponsors": [country1, country2, ...],
+            "preambulatory_clauases": [1. clause1; , 2. clause2; ..., N. clauseN.]
+            "operative_clauses": [1. clause1; , 2. clause2; ..., N. clauseN.]
+            }}
+
+            {generation_rules}
+            """
+        response = think(prompt)
+        self.title = response["title"]
+        self.sponsors = response["sponsors"]
+        self.preambulatory_clauases = response["preambulatory_clauases"]
+        self.operative_clauses = response["operative_clauses"]
 
     def present(self):
-        self.introduced = True
         return f""" 
-            Draft Resolution sponsored by {self.sponsors} on the topic of {self.topic}
+            DRAFT RESOLUTION
+            {self.title}
+
+            Sponsors: {self.sponsors}
+            Signatories: {self.signatories}
             -----------------------------------------------------------------------------
             
             Preambulatory Clauses : 
@@ -413,8 +465,9 @@ class DraftResolution:
             {self.operative_clauses}
             
             Signatories : {self.signatories}
-            """
 
+            Status: {self.passed}
+            """
 
 class Amendment:
     """change proposed to a draft resolution"""

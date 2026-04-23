@@ -1,4 +1,4 @@
-from framework import Delegate, Motion
+from framework import Delegate, Motion, SpeakersList
 
 
 class MUN:
@@ -6,9 +6,9 @@ class MUN:
                  time,
                  title,
                  committee: list[Delegate],
-                 state: str,
                  agenda: list[Motion],
-                 log):
+                 log,
+                 state="START"):
         self.time = time
         self.committee = committee
         self.state = state
@@ -16,6 +16,8 @@ class MUN:
         self.agenda = agenda
         self.log = log
         self.title = title
+        self.resolutions = []
+        self.general_speakers_list = SpeakersList(speech_duration=None)
     
     def intro(self): 
         return f""" 
