@@ -10,7 +10,7 @@ from framework.framework import (
 from framework.mun import MUN
 from cognition.prompts import persona_context, generation_rules
 from cognition.engine import think
-from logs.log import save_state
+from logs.log import save_state, log_activity
 
 
 # LATER ON IMPLEMENT AMENDMENTS
@@ -31,11 +31,32 @@ def vote_draft_resolution(resolution: DraftResolution, session: MUN):
 
     resolution.passed = vote.evaluate()
     vote.log(session.log, session.time)
+    log_activity(
+        session,
+        kind="vote",
+        summary=(
+            f"Vote {vote.id} on {resolution.id} ({resolution.title}): "
+            f"{vote.favor_count} in favor, {vote.against_count} against, "
+            f"{vote.refraining_count} abstain — "
+            f"{'PASSED' if resolution.passed else 'REJECTED'}"
+        ),
+        ref_id=vote.id,
+    )
     save_state(session)
 
 
 def process_moderated_caucus(caucus: ModeratedCaucus, session: MUN):
     print(f"MODERATED CAUCUS SESSION {caucus.id}")
+    log_activity(
+        session,
+        kind="caucus_opened",
+        summary=(
+            f"{caucus.id} (moderated) opened on '{caucus.topic}' — "
+            f"{caucus.num_speakers} speakers, {caucus.speech_duration}s "
+            f"(proposer: {caucus.proposer.country})"
+        ),
+        ref_id=caucus.id,
+    )
 
     print(" ======= Voluntary speakers =======")
     speaker_candidates = []
@@ -88,9 +109,27 @@ def process_moderated_caucus(caucus: ModeratedCaucus, session: MUN):
         )
         print("Speech logged")
         caucus.speeches[str(delegate.country)] = speech
+        log_activity(
+            session,
+            kind="speech",
+            summary=(
+                f"{delegate.country} spoke in {caucus.id}: "
+                f"{speech[:140]}{'...' if len(speech) > 140 else ''}"
+            ),
+            ref_id=caucus.id,
+        )
 
     caucus_log = caucus.to_dict()
     session.log["moderated_caucuses"][caucus.id] = caucus_log
+    log_activity(
+        session,
+        kind="caucus_closed",
+        summary=(
+            f"{caucus.id} closed — speakers: "
+            f"{', '.join(caucus.speeches.keys()) or 'none'}"
+        ),
+        ref_id=caucus.id,
+    )
     save_state(session)
 
     print(" ======= End of Moderated Caucus, back to general debate =======")
@@ -98,6 +137,15 @@ def process_moderated_caucus(caucus: ModeratedCaucus, session: MUN):
 
 def process_unmoderated_caucus(caucus: UnmoderatedCaucus, session: MUN):
     print(f"UNMODERATED CAUCUS SESSION {caucus.id}")
+    log_activity(
+        session,
+        kind="caucus_opened",
+        summary=(
+            f"{caucus.id} (unmoderated) opened on '{caucus.topic}' "
+            f"(proposer: {caucus.proposer.country})"
+        ),
+        ref_id=caucus.id,
+    )
 
     print("======== Initial Positions ========")
     for delegate in session.committee:
@@ -161,6 +209,18 @@ def process_unmoderated_caucus(caucus: UnmoderatedCaucus, session: MUN):
     )
     selected_blocs = json.loads(raw_blocs)
     caucus.make_blocs_brief(selected_blocs, session)
+    log_activity(
+        session,
+        kind="blocs_formed",
+        summary=(
+            f"Blocs in {caucus.id}: "
+            + "; ".join(
+                f"{bid}=[{', '.join(members)}]"
+                for bid, members in selected_blocs.items()
+            )
+        ),
+        ref_id=caucus.id,
+    )
 
     print(" ======== Free negociations within blocs ======== ")
     T = caucus.duration
@@ -204,8 +264,18 @@ def process_unmoderated_caucus(caucus: UnmoderatedCaucus, session: MUN):
         paper.build_paper(caucus.blocs_brief, bloc_id)
         print(paper.present())
         working_papers.append(paper)
+        log_activity(
+            session,
+            kind="paper_built",
+            summary=(
+                f"{paper.id} drafted by bloc {bloc_id}: '{paper.title}' "
+                f"(sponsors: {', '.join(d.country for d in paper.sponsors)})"
+            ),
+            ref_id=paper.id,
+        )
 
     print(" ======== Draft resolutions ======== ")
+    promoted_count = 0
     for paper in working_papers:
         draft = paper.evaluate()
         if not draft:
@@ -217,6 +287,7 @@ def process_unmoderated_caucus(caucus: UnmoderatedCaucus, session: MUN):
         resolution.build_from_paper(paper)
         print(resolution.present())
         session.resolutions.append(resolution)
+        promoted_count += 1
         session.log["resolutions"][resolution.id] = {
             "title": resolution.title,
             "sponsors": resolution.sponsors,
@@ -224,6 +295,15 @@ def process_unmoderated_caucus(caucus: UnmoderatedCaucus, session: MUN):
             "operative_clauses": resolution.operative_clauses,
             "passed": resolution.passed,
         }
+        log_activity(
+            session,
+            kind="resolution_drafted",
+            summary=(
+                f"{resolution.id} promoted from {paper.id}: "
+                f"'{resolution.title}' (sponsors: {', '.join(resolution.sponsors)})"
+            ),
+            ref_id=resolution.id,
+        )
 
     session.log["unmoderated_caucuses"][caucus.id] = {
         "topic": caucus.topic,
@@ -232,6 +312,15 @@ def process_unmoderated_caucus(caucus: UnmoderatedCaucus, session: MUN):
         "blocs": {bid: [d.country for d in b["members"]]
                   for bid, b in caucus.blocs_brief.items()},
     }
+    log_activity(
+        session,
+        kind="caucus_closed",
+        summary=(
+            f"{caucus.id} closed — papers: {len(working_papers)}, "
+            f"resolutions promoted: {promoted_count}"
+        ),
+        ref_id=caucus.id,
+    )
     save_state(session)
 
     print(" ======= End of the Unmoderated caucus, back to general debate ======= ")
@@ -313,6 +402,14 @@ def general_speakers_list(session: MUN):
         print(speech)
         past_speeches[delegate.country] = speech
         session.general_speakers_list.speeches[delegate.country] = speech
+        log_activity(
+            session,
+            kind="speech",
+            summary=(
+                f"{delegate.country} spoke in GSL: "
+                f"{speech[:140]}{'...' if len(speech) > 140 else ''}"
+            ),
+        )
 
     session.log["general_speakers_list"]["speeches"].update(past_speeches)
     session.log["general_speakers_list"]["current_queue"] = [
@@ -360,6 +457,14 @@ def general_debate(session: MUN):
 
     print(f"Running motion proposed by {proposing_country}")
     proposer = next(d for d in session.committee if d.country == proposing_country)
+    log_activity(
+        session,
+        kind="motion_passed",
+        summary=(
+            f"Motion passed: '{motion['type']}' by {proposing_country} "
+            f"(parameters: {motion.get('parameters')})"
+        ),
+    )
 
     if motion["type"] == "unmod":
         caucus = UnmoderatedCaucus(
@@ -393,3 +498,5 @@ def general_debate(session: MUN):
     elif motion["type"] == "end":
         print("======= End of the MUN session =======")
         session.state = "END"
+        log_activity(session, kind="session_ended", summary="Session ended.")
+        save_state(session)

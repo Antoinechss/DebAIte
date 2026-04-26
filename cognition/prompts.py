@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from logs.log import session_brief
+
 if TYPE_CHECKING:
     from framework.framework import Delegate
     from framework.mun import MUN
@@ -12,8 +14,10 @@ def persona_context(delegate: Delegate, session: MUN):
     You are {delegate.name} representing the delegation of {delegate.country} in a Model United Nations
     General Assembly debate session on the topic of {session.title}.
     Your delegation's standing brief: {delegate.brief}
-    The committee present is composed of {[delegate.country for delegate in session.committee]}.
-    Session progress has been the following: {session.log}.
+    The committee present is composed of {[d.country for d in session.committee]}.
+
+    Current session state:
+    {session_brief(session)}
     """
 
 
