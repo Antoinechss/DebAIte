@@ -17,7 +17,7 @@ from logs.log import save_state
 def vote_draft_resolution(resolution: DraftResolution, session: MUN):
 
     vote = Vote(
-        id=f"V{session.time.isoformat()}",
+        id=session.next_id("V"),
         topic=f"Draft Resolution {resolution.id}",
         type="substantive",
         supporting_document=resolution,
@@ -199,7 +199,8 @@ def process_unmoderated_caucus(caucus: UnmoderatedCaucus, session: MUN):
     working_papers = []
     for bloc_id in caucus.blocs_brief:
         print(f"Building paper for bloc {bloc_id}")
-        paper = WorkingPaper(id=f"P{bloc_id}")
+        paper = WorkingPaper(id=session.next_id("P"))
+        paper.bloc_id = bloc_id
         paper.build_paper(caucus.blocs_brief, bloc_id)
         print(paper.present())
         working_papers.append(paper)
@@ -211,7 +212,8 @@ def process_unmoderated_caucus(caucus: UnmoderatedCaucus, session: MUN):
             print(f"Paper {paper.id} not retained for draft resolution")
             continue
         print(f"Drafting {paper.id} into resolution")
-        resolution = DraftResolution(id=f"DR{paper.id}")
+        resolution = DraftResolution(id=session.next_id("DR"))
+        resolution.paper_id = paper.id
         resolution.build_from_paper(paper)
         print(resolution.present())
         session.resolutions.append(resolution)
@@ -358,11 +360,10 @@ def general_debate(session: MUN):
 
     print(f"Running motion proposed by {proposing_country}")
     proposer = next(d for d in session.committee if d.country == proposing_country)
-    timestamp = session.time.isoformat()
 
     if motion["type"] == "unmod":
         caucus = UnmoderatedCaucus(
-            id=f"UMC{timestamp}",
+            id=session.next_id("UMC"),
             topic=motion["parameters"]["topic"],
             proposer=proposer,
         )
@@ -370,7 +371,7 @@ def general_debate(session: MUN):
 
     elif motion["type"] == "mod":
         caucus = ModeratedCaucus(
-            id=f"MC{timestamp}",
+            id=session.next_id("MC"),
             topic=motion["parameters"]["topic"],
             proposer=proposer,
             num_speakers=motion["parameters"]["num_speakers"],
