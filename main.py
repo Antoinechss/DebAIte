@@ -8,7 +8,7 @@ from logs.log import init_log
 
 SESSION_TITLE = "Finding compromise for the ongoing war in Iran"
 
-if __name__ == "main":
+if __name__ == "__main__":
     print(" ======== MODEL UNITED NATIONS ======== ")
 
     # ---- Session Opening ----

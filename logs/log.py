@@ -1,7 +1,8 @@
 from pathlib import Path
 from framework.mun import MUN
 from datetime import datetime
-import json, os
+import json
+import os
 
 
 def create_initial_log(session: MUN):
@@ -42,3 +43,9 @@ def init_log(session):
     session.log = log
     with open("logs/log.json", "w") as f:
         json.dump(log, f, indent=4, ensure_ascii=False)
+
+
+def save_state(session):
+    print("Saving session state")
+    with open("logs/log.json", "w") as f:
+        json.dump(session.log, f, indent=4, ensure_ascii=False)

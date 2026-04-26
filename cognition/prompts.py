@@ -1,12 +1,18 @@
-from framework.framework import Delegate
-from framework.mun import MUN
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from framework.framework import Delegate
+    from framework.mun import MUN
 
 
 def persona_context(delegate: Delegate, session: MUN):
     return f"""
-    You are {delegate.name} representing the delegation of {delegate.country} in a Model United Nations 
+    You are {delegate.name} representing the delegation of {delegate.country} in a Model United Nations
     General Assembly debate session on the topic of {session.title}.
-    The committee present is composed of {[delegate.country for delegate in session.committee]}. 
+    Your delegation's standing brief: {delegate.brief}
+    The committee present is composed of {[delegate.country for delegate in session.committee]}.
     Session progress has been the following: {session.log}.
     """
 

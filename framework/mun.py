@@ -1,4 +1,4 @@
-from framework import Delegate, Motion, SpeakersList
+from framework.framework import Delegate, SpeakersList
 
 
 class MUN:
@@ -6,6 +6,7 @@ class MUN:
                  time,
                  title,
                  committee: list[Delegate],
+                 agenda,
                  log,
                  state="START"):
         self.time = time
@@ -14,13 +15,13 @@ class MUN:
         self.requires_chair_action = False
         self.log = log
         self.title = title
+        self.agenda = agenda
         self.resolutions = []
         self.general_speakers_list = SpeakersList(speech_duration=None)
-    
-    def intro(self): 
-        return f""" 
+
+    def intro(self):
+        return f"""
         Welcome to Model United Nations General Committe debate
         Topic on the agenda today is: {self.title}
         Members present in the committee are: {self.committee}
-        """"
-    
+        """

@@ -1,19 +1,27 @@
-from mun import MUN
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from cognition.prompts import persona_context, generation_rules, motion_submission_rules
 from cognition.engine import think
 
+if TYPE_CHECKING:
+    from framework.mun import MUN
+
 
 class Delegate:
-    def __init__(self, id: str, name: str, country: str):
+    def __init__(self, id: str, name: str, country: str, brief: str = ""):
         self.id = id
         self.name = name
         self.country = country
+        self.brief = brief
 
     def to_dict(self):
         return {
             "id": self.id,
             "name": self.name,
-            "country": self.country
+            "country": self.country,
+            "brief": self.brief,
         }
 
     def motion(self, session: MUN):
@@ -72,11 +80,9 @@ class Delegate:
 
         if delegate_vote == "yes":
             vote.delegates_in_favor.append(self.id)
-        if delegate_vote == "no":
+        elif delegate_vote == "no":
             vote.delegates_against.append(self.id)
-        if delegate_vote == "blank":
-            vote.delegates_refraining.append(self.id)
-        else:  # Default blank vote
+        else:
             vote.delegates_refraining.append(self.id)
 
     def make_speech(self, topic_prompt: str, speech_duration: int, session: MUN):
@@ -159,10 +165,20 @@ class Delegate:
         return motions
 
 
+MAX_SPEECH_DURATION = 200
+
+
 class SpeakersList:
-    def __init__(self, speech_duration: int | None):
+    def __init__(self, speech_duration=MAX_SPEECH_DURATION):
         self.queue = []
         self.speech_duration = speech_duration
+        self.speeches = {}
+    
+    def to_dict(self):
+        return {
+            "queue": self.queue,
+            "speeches": self.speeches
+        }
 
 
 class ModeratedCaucus:
@@ -189,6 +205,15 @@ class ModeratedCaucus:
         Speeches already given (empty if caucus has not started yet): 
         {self.speeches}
         """
+    
+    def to_dict(self):
+        return {
+            "topic": self.topic,
+            "proposer": self.proposer,
+            "num_speakers": self.num_speakers,
+            "speech_duration": self.speech_duration,
+            "speeches": self.speeches
+        }
 
 
 class UnmoderatedCaucus:
@@ -244,7 +269,8 @@ MOTION_TYPES = [
     "open speakers list",
     "moderated caucus",
     "introduce draft resolution",
-    "introduce amendment" "close debate",
+    "introduce amendment",
+    "close debate",
     "vote",
 ]
 
@@ -262,8 +288,8 @@ class Motion:
         self.id = id
         self.type = type
         self.proposer = proposer
-        self.parameters = parameters | None
-        self.document = document | None
+        self.parameters = parameters
+        self.document = document
         self.status = status
 
 
@@ -285,12 +311,21 @@ class Vote:
         self.type = type
         self.topic = topic
         self.delegates_refraining = delegates_refraining
-        self.refraining_count = len(delegates_refraining)
         self.delegates_in_favor = delegates_in_favor
-        self.favor_count = len(delegates_in_favor)
         self.delegates_against = delegates_against
-        self.against_count = len(delegates_against)
         self.supporting_document = supporting_document
+
+    @property
+    def refraining_count(self):
+        return len(self.delegates_refraining)
+
+    @property
+    def favor_count(self):
+        return len(self.delegates_in_favor)
+
+    @property
+    def against_count(self):
+        return len(self.delegates_against)
 
     def brief(self):
         brief = f"""
@@ -299,28 +334,27 @@ class Vote:
         """
         return brief
 
-    def evaluate(self, type) -> bool:
+    def evaluate(self) -> bool:
         """Evaluate if a vote passes according to its type"""
-        if type == "procedural":  # Simple majority
-            return self.favor_count >= 0.5(
-                self.favor_count + self.against_count + self.refraining_count
-            )
-        if type == "substantiative":  # Two thirds
-            return self.favor_count >= 0.66 * (
-                self.favor_count + self.against_count + self.refraining_count
-            )
+        total = self.favor_count + self.against_count + self.refraining_count
+        if total == 0:
+            return False
+        if self.type == "procedural":
+            return self.favor_count >= 0.5 * total
+        if self.type == "substantive":
+            return self.favor_count >= 0.66 * total
+        return False
 
     def log(self, session_log, timestamp):
-        vote_brief = self.brief()
-        issue = self.evaluate()
-        session_log.write(
-            f"""
-            Time: {timestamp}
-                VOTE:
-                {vote_brief}
-                issue: {issue}
-            """
-        )
+        session_log["votings"][self.id] = {
+            "timestamp": str(timestamp),
+            "type": self.type,
+            "topic": self.topic,
+            "in_favor": self.delegates_in_favor,
+            "against": self.delegates_against,
+            "refraining": self.delegates_refraining,
+            "passed": self.evaluate(),
+        }
 
 
 # ------------ DOCUMENTS ------------
@@ -391,9 +425,9 @@ class WorkingPaper:
     def evaluate(self):
         prompt = f"""
             You are a UN committee chair
-            Evaluate the following working paper established within a bloc during unmoderated caucus: 
+            Evaluate the following working paper established within a bloc during unmoderated caucus:
 
-            {self.display()}
+            {self.present()}
 
             Decide if it is sufficiently developed to be introduced as a draft resolution
             Criterias: 
@@ -443,7 +477,7 @@ class DraftResolution:
             {{
             "title": your_title,
             "sponsors": [country1, country2, ...],
-            "preambulatory_clauases": [1. clause1; , 2. clause2; ..., N. clauseN.]
+            "preambulatory_clauses": [1. clause1; , 2. clause2; ..., N. clauseN.],
             "operative_clauses": [1. clause1; , 2. clause2; ..., N. clauseN.]
             }}
 
@@ -452,7 +486,7 @@ class DraftResolution:
         response = think(prompt)
         self.title = response["title"]
         self.sponsors = response["sponsors"]
-        self.preambulatory_clauases = response["preambulatory_clauases"]
+        self.preambulatory_clauses = response["preambulatory_clauses"]
         self.operative_clauses = response["operative_clauses"]
 
     def present(self):
