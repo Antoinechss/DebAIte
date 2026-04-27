@@ -1,0 +1,18 @@
+{
+    "resolutions": [
+        {
+            "id": "DRX",
+            "title": "Test",
+            "sponsors": [
+                "USA"
+            ],
+            "signatories": [],
+            "preambulatory_clauses": [],
+            "operative_clauses": [
+                "1. New text",
+                "1.5 Inserted"
+            ],
+            "adopted_at": "2026-04-27T08:54:59"
+        }
+    ]
+}

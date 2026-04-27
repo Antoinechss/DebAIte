@@ -1,0 +1,23 @@
+{
+    "id": "USA",
+    "country": "USA",
+    "brief": "Currently at war with Iran",
+    "bloc_history": [
+        {
+            "caucus_id": "UMC1",
+            "bloc_id": "B1",
+            "members": [
+                "USA",
+                "France"
+            ],
+            "ideas": [
+                "Joint observers"
+            ],
+            "agreements": [
+                "72h pause"
+            ],
+            "conflicts": []
+        }
+    ],
+    "private_notes": []
+}

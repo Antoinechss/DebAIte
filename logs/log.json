@@ -1,10 +1,10 @@
 {
     "meta": {
         "committee_name": "UN General Assembly",
-        "topic": "Finding compromise for the ongoing war in Iran",
+        "topic": "Iran ceasefire",
         "state": "START",
-        "starting_time": "2026-04-27T08:29:55.750663",
-        "current_time": "2026-04-27T08:29:55.750677"
+        "starting_time": "2026-04-27T08:54:59.714685",
+        "current_time": "2026-04-27T08:54:59.715652"
     },
     "committee": {
         "delegates": {
@@ -40,12 +40,39 @@
     },
     "moderated_caucuses": {},
     "unmoderated_caucuses": {},
-    "resolutions": {},
+    "resolutions": {
+        "DR1": {
+            "title": "Joint Framework",
+            "sponsors": [
+                "France",
+                "USA"
+            ],
+            "preambulatory_clauses": [
+                "Recalling UN Charter"
+            ],
+            "operative_clauses": [
+                "Calls for 72h pause"
+            ],
+            "passed": null
+        }
+    },
     "activity": [
         {
-            "t": "2026-04-27T08:29:55",
+            "t": "2026-04-27T08:54:59",
             "kind": "session_opened",
-            "summary": "Session opened on 'Finding compromise for the ongoing war in Iran' with delegations: USA, Iran, Israel, France"
+            "summary": "Session opened on 'Iran ceasefire' with delegations: USA, Iran, Israel, France"
+        },
+        {
+            "t": "2026-04-27T08:54:59",
+            "kind": "resolution_drafted",
+            "summary": "DR1 promoted",
+            "ref_id": "DR1"
+        },
+        {
+            "t": "2026-04-27T08:54:59",
+            "kind": "speech",
+            "summary": "France: pause needed",
+            "ref_id": "MC1"
         }
     ],
     "votings": {}
