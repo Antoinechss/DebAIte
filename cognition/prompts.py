@@ -3,21 +3,25 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from logs.log import session_brief
+from logs.memory import memory_brief
 
 if TYPE_CHECKING:
     from framework.framework import Delegate
     from framework.mun import MUN
 
 
-def persona_context(delegate: Delegate, session: MUN):
+def persona_context(delegate: Delegate, session: MUN, focus_resolution_id: str | None = None):
     return f"""
     You are {delegate.name} representing the delegation of {delegate.country} in a Model United Nations
     General Assembly debate session on the topic of {session.title}.
     Your delegation's standing brief: {delegate.brief}
     The committee present is composed of {[d.country for d in session.committee]}.
 
-    Current session state:
-    {session_brief(session)}
+    --- Public session state (visible to everyone) ---
+    {session_brief(session, focus_resolution_id=focus_resolution_id)}
+
+    --- Your private memory (only visible to you) ---
+    {memory_brief(delegate.id)}
     """
 
 
@@ -48,6 +52,11 @@ Follow EXACTLY this format for your output:
     {"type": "present_resolution", "parameters": {"resolution_id": id of the resolution}}
 - Motion to vote on resolution:
     {"type": "vote_resolution", "parameters": {"resolution_id": id of the resolution}}
+- Motion to introduce an amendment:
+    {"type": "amendment", "parameters": {"resolution_id": id of the target resolution,
+                                         "action": "strike" | "modify" | "add",
+                                         "clause_id": 1-indexed operative clause number,
+                                         "new_text": replacement text (use "" for strike)}}
 - Motion to end the session:
     {"type": "end", "parameters": None}
 """

@@ -49,11 +49,16 @@ class Delegate:
         return response
 
     def vote(self, vote, session: MUN):
-    
+
         vote_brief = vote.brief()
+        focus_id = (
+            vote.supporting_document.id
+            if hasattr(vote.supporting_document, "id")
+            else None
+        )
 
         prompt = f"""
-            {persona_context(self, session)}
+            {persona_context(self, session, focus_resolution_id=focus_id)}
 
             This is a voting procedure.
 
@@ -265,14 +270,52 @@ class UnmoderatedCaucus:
 
 # ------------ PROCEDURES ------------
 
-MOTION_TYPES = [
-    "open speakers list",
-    "moderated caucus",
-    "introduce draft resolution",
-    "introduce amendment",
-    "close debate",
-    "vote",
-]
+# Motion schemas — keyed by the "type" field the LLM returns.
+# `params` lists required parameter keys; None means no parameters expected.
+MOTION_SCHEMAS = {
+    "unmod": {"params": ["topic"]},
+    "mod": {"params": ["topic", "num_speakers", "speech_duration"]},
+    "general_speakers_list": {"params": None},
+    "present_resolution": {"params": ["resolution_id"]},
+    "vote_resolution": {"params": ["resolution_id"]},
+    "amendment": {
+        "params": ["resolution_id", "action", "clause_id", "new_text"]
+    },
+    "end": {"params": None},
+}
+
+
+def validate_motion(motion):
+    """Return (sanitized_motion, None) if valid, else (None, reason).
+
+    Drops motions whose type is unknown or whose required parameters are
+    missing. Adds vote_score=0 if absent.
+    """
+    if not isinstance(motion, dict):
+        return None, "not a dict"
+    motion_type = motion.get("type")
+    if motion_type is None:
+        return None, "no type (delegate declined to propose)"
+    if motion_type not in MOTION_SCHEMAS:
+        return None, f"unknown motion type '{motion_type}'"
+
+    schema = MOTION_SCHEMAS[motion_type]
+    params = motion.get("parameters")
+    if schema["params"] is None:
+        clean_params = None
+    else:
+        if not isinstance(params, dict):
+            return None, f"motion '{motion_type}' requires parameters dict"
+        missing = [k for k in schema["params"] if k not in params]
+        if missing:
+            return None, f"motion '{motion_type}' missing parameters: {missing}"
+        clean_params = {k: params[k] for k in schema["params"]}
+
+    return {
+        "type": motion_type,
+        "parameters": clean_params,
+        "vote_score": motion.get("vote_score", 0),
+    }, None
 
 
 class Motion:
@@ -490,54 +533,84 @@ class DraftResolution:
         self.operative_clauses = response["operative_clauses"]
 
     def present(self):
-        return f""" 
-            DRAFT RESOLUTION
+        return f"""
+            DRAFT RESOLUTION {self.id}
             {self.title}
 
             Sponsors: {self.sponsors}
             Signatories: {self.signatories}
             -----------------------------------------------------------------------------
-            
-            Preambulatory Clauses : 
+
+            Preambulatory Clauses:
             {self.preambulatory_clauses}
 
-
-            Operative clauses :
+            Operative Clauses:
             {self.operative_clauses}
-            
-            Signatories : {self.signatories}
 
             Status: {self.passed}
             """
 
 class Amendment:
-    """change proposed to a draft resolution"""
+    """change proposed to a draft resolution.
+
+    Actions:
+      - 'strike'  : remove the clause at clause_id (1-indexed)
+      - 'modify'  : replace the clause at clause_id with new_text
+      - 'add'     : insert new_text after clause at clause_id (0 = at start)
+    """
+
+    ACTIONS = ("strike", "modify", "add")
 
     def __init__(
         self,
         id: str,
         target_resolution: DraftResolution,
         proposer: Delegate,
+        action: str,
         clause_target_id: int,
-        new_text: str,
-        is_friendly: bool,
-        status: str,
+        new_text: str = "",
+        is_friendly: bool = False,
+        status: str = "proposed",
     ):
+        if action not in self.ACTIONS:
+            raise ValueError(f"unknown amendment action '{action}'")
         self.id = id
         self.target_resolution = target_resolution
         self.proposer = proposer
+        self.action = action
         self.clause_target_id = clause_target_id
         self.new_text = new_text
         self.is_friendly = is_friendly
         self.status = status
 
-    def present(self):
-        return f""" 
-            {self.is_friendly} amendment {self.id} proposed by {self.proposer} 
-            targetting resolution {self.target_resolution.id}
-            -----------------------------------------------------------------------------
-            
-            Target clause: {self.clause_target_id}
+    def apply(self):
+        """Apply the amendment to its target resolution's operative clauses."""
+        clauses = self.target_resolution.operative_clauses
+        idx = self.clause_target_id - 1  # 1-indexed -> 0-indexed
+        if self.action == "strike":
+            if 0 <= idx < len(clauses):
+                clauses.pop(idx)
+        elif self.action == "modify":
+            if 0 <= idx < len(clauses):
+                clauses[idx] = self.new_text
+        elif self.action == "add":
+            insert_at = max(0, min(self.clause_target_id, len(clauses)))
+            clauses.insert(insert_at, self.new_text)
+        self.status = "applied"
 
-            Replace clause by: {self.new_text}
-            """
+    def present(self):
+        kind = "Friendly" if self.is_friendly else "Unfriendly"
+        body = {
+            "strike": f"Strike clause {self.clause_target_id}",
+            "modify": (
+                f"Modify clause {self.clause_target_id} to: {self.new_text}"
+            ),
+            "add": (
+                f"Insert new clause after position {self.clause_target_id}: "
+                f"{self.new_text}"
+            ),
+        }[self.action]
+        return (
+            f"{kind} amendment {self.id} by {self.proposer.country} "
+            f"on {self.target_resolution.id} — {body}"
+        )

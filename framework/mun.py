@@ -1,7 +1,7 @@
 from framework.framework import Delegate, SpeakersList
 
 
-ID_PREFIXES = {"MC", "UMC", "P", "DR", "V"}
+ID_PREFIXES = {"MC", "UMC", "P", "DR", "V", "A"}
 
 
 class MUN:

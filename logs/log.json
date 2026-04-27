@@ -3,8 +3,8 @@
         "committee_name": "UN General Assembly",
         "topic": "Finding compromise for the ongoing war in Iran",
         "state": "START",
-        "starting_time": "2026-04-26T22:14:11.176531",
-        "current_time": "2026-04-26T22:14:11.177226"
+        "starting_time": "2026-04-27T08:29:55.750663",
+        "current_time": "2026-04-27T08:29:55.750677"
     },
     "committee": {
         "delegates": {
@@ -40,53 +40,12 @@
     },
     "moderated_caucuses": {},
     "unmoderated_caucuses": {},
-    "resolutions": {
-        "DR1": {
-            "title": "Joint Framework for Ceasefire and Aid",
-            "sponsors": [
-                "France",
-                "USA"
-            ],
-            "preambulatory_clauses": [],
-            "operative_clauses": [],
-            "passed": null
-        }
-    },
+    "resolutions": {},
     "activity": [
         {
-            "t": "2026-04-26T22:14:11",
+            "t": "2026-04-27T08:29:55",
             "kind": "session_opened",
             "summary": "Session opened on 'Finding compromise for the ongoing war in Iran' with delegations: USA, Iran, Israel, France"
-        },
-        {
-            "t": "2026-04-26T22:14:11",
-            "kind": "caucus_opened",
-            "summary": "MC1 (moderated) opened on \"ceasefire terms\" — 3 speakers, 60s (proposer: USA)",
-            "ref_id": "MC1"
-        },
-        {
-            "t": "2026-04-26T22:14:11",
-            "kind": "speech",
-            "summary": "France spoke in MC1: We propose a 72-hour humanitarian pause overseen by neutral observers.",
-            "ref_id": "MC1"
-        },
-        {
-            "t": "2026-04-26T22:14:11",
-            "kind": "speech",
-            "summary": "Iran spoke in MC1: We require unconditional sanctions relief before any pause.",
-            "ref_id": "MC1"
-        },
-        {
-            "t": "2026-04-26T22:14:11",
-            "kind": "caucus_closed",
-            "summary": "MC1 closed — speakers: France, Iran",
-            "ref_id": "MC1"
-        },
-        {
-            "t": "2026-04-26T22:14:11",
-            "kind": "resolution_drafted",
-            "summary": "DR1 promoted from P1: \"Joint Framework for Ceasefire and Aid\" (sponsors: France, USA)",
-            "ref_id": "DR1"
         }
     ],
     "votings": {}

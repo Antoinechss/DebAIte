@@ -1,16 +1,22 @@
-import json
-
 from framework.framework import (
+    Amendment,
     DraftResolution,
     Vote,
     ModeratedCaucus,
     UnmoderatedCaucus,
     WorkingPaper,
+    validate_motion,
 )
 from framework.mun import MUN
+from framework.chair import (
+    chair_filter_motions,
+    chair_select_speakers,
+    chair_form_blocs,
+)
 from cognition.prompts import persona_context, generation_rules
 from cognition.engine import think
-from logs.log import save_state, log_activity
+from logs.log import save_state, log_activity, append_passed_resolution
+from logs.memory import append_bloc_history
 
 
 # LATER ON IMPLEMENT AMENDMENTS
@@ -31,6 +37,7 @@ def vote_draft_resolution(resolution: DraftResolution, session: MUN):
 
     resolution.passed = vote.evaluate()
     vote.log(session.log, session.time)
+    session.log["resolutions"][resolution.id]["passed"] = resolution.passed
     log_activity(
         session,
         kind="vote",
@@ -42,6 +49,16 @@ def vote_draft_resolution(resolution: DraftResolution, session: MUN):
         ),
         ref_id=vote.id,
     )
+    if resolution.passed:
+        append_passed_resolution(resolution)
+        log_activity(
+            session,
+            kind="resolution_passed",
+            summary=(
+                f"{resolution.id} '{resolution.title}' adopted by the committee."
+            ),
+            ref_id=resolution.id,
+        )
     save_state(session)
 
 
@@ -77,13 +94,7 @@ def process_moderated_caucus(caucus: ModeratedCaucus, session: MUN):
         if delegate_decision == "yes":
             speaker_candidates.append(delegate.id)
 
-    print("======= Speaker list selection by the chair =======")
-    print(f"List of speaker candidates: {speaker_candidates}")
-    chair_selection = input(
-        f"""Select up to {caucus.num_speakers} speaker IDs (comma-separated)
-        >>>"""
-    )
-    selected_ids = {s.strip() for s in chair_selection.split(",") if s.strip()}
+    selected_ids = chair_select_speakers(speaker_candidates, caucus.num_speakers)
     speakers = [
         delegate for delegate in session.committee if delegate.id in selected_ids
     ]
@@ -198,16 +209,9 @@ def process_unmoderated_caucus(caucus: UnmoderatedCaucus, session: MUN):
         bloc_choice = response["bloc"]
         bloc_requests[delegate.country] = bloc_choice
 
-    print(" ======== Blocs formation by the Chair ======== ")
-    print(
-        f"Delegates have made the following wishes regarding their blocs: {bloc_requests}"
+    selected_blocs = chair_form_blocs(
+        bloc_requests, [d.country for d in session.committee]
     )
-
-    raw_blocs = input(
-        """Manually form blocs as JSON, e.g. {"B1": ["USA","France"], "B2": ["Iran"]}
-                >>>"""
-    )
-    selected_blocs = json.loads(raw_blocs)
     caucus.make_blocs_brief(selected_blocs, session)
     log_activity(
         session,
@@ -254,6 +258,20 @@ def process_unmoderated_caucus(caucus: UnmoderatedCaucus, session: MUN):
                 """
                 action = think(contribution_prompt)
                 caucus.update_bloc_state(bloc["id"], action)
+
+    # Information asymmetry: write each bloc's deliberation to its members'
+    # private memory only. The public session_brief never sees this.
+    for bloc_id, bloc in caucus.blocs_brief.items():
+        entry = {
+            "caucus_id": caucus.id,
+            "bloc_id": bloc_id,
+            "members": [d.country for d in bloc["members"]],
+            "ideas": list(bloc.get("ideas", [])),
+            "agreements": list(bloc.get("agreements", [])),
+            "conflicts": list(bloc.get("conflicts", [])),
+        }
+        for delegate in bloc["members"]:
+            append_bloc_history(delegate.id, entry)
 
     print(" ======== Building working papers with a neutral LLM agent ======== ")
     working_papers = []
@@ -303,6 +321,10 @@ def process_unmoderated_caucus(caucus: UnmoderatedCaucus, session: MUN):
                 f"'{resolution.title}' (sponsors: {', '.join(resolution.sponsors)})"
             ),
             ref_id=resolution.id,
+        )
+        _gather_signatories(resolution, session)
+        session.log["resolutions"][resolution.id]["signatories"] = list(
+            resolution.signatories
         )
 
     session.log["unmoderated_caucuses"][caucus.id] = {
@@ -420,6 +442,175 @@ def general_speakers_list(session: MUN):
     print(" ===== Closing General Speakers List ======== ")
     
 
+def process_amendment(amendment: Amendment, session: MUN):
+    """Process a proposed amendment: friendly check → apply, else procedural vote.
+
+    Friendly: all sponsors of the target resolution accept → applied automatically.
+    Unfriendly: simple-majority procedural vote among the whole committee → applied if passes.
+    """
+    print(f" ======= Amendment {amendment.id} ======= ")
+    print(amendment.present())
+
+    # Friendly check: poll the sponsors
+    sponsors = set(amendment.target_resolution.sponsors)
+    sponsor_delegates = [
+        d for d in session.committee if d.country in sponsors
+    ]
+    sponsor_responses = {}
+    for delegate in sponsor_delegates:
+        proposal = (
+            f"You are a sponsor of {amendment.target_resolution.id}. "
+            f"An amendment has been proposed:\n\n{amendment.present()}\n\n"
+            f"Do you accept this as a friendly amendment (i.e. agree to it "
+            f"without a vote)?"
+        )
+        sponsor_responses[delegate.country] = delegate.decide(proposal)
+
+    all_sponsors_agree = (
+        len(sponsor_delegates) > 0
+        and all(v == "yes" for v in sponsor_responses.values())
+    )
+
+    if all_sponsors_agree:
+        amendment.is_friendly = True
+        amendment.apply()
+        # Mirror the change into the session log so future briefs reflect it.
+        session.log["resolutions"][amendment.target_resolution.id][
+            "operative_clauses"
+        ] = list(amendment.target_resolution.operative_clauses)
+        log_activity(
+            session,
+            kind="amendment_applied",
+            summary=(
+                f"Friendly amendment {amendment.id} applied to "
+                f"{amendment.target_resolution.id} "
+                f"({amendment.action}, clause {amendment.clause_target_id})"
+            ),
+            ref_id=amendment.id,
+        )
+        save_state(session)
+        return
+
+    # Unfriendly: procedural vote
+    amendment.is_friendly = False
+    vote = Vote(
+        id=session.next_id("V"),
+        topic=f"Amendment {amendment.id} on {amendment.target_resolution.id}",
+        type="procedural",
+        supporting_document=amendment,
+        delegates_refraining=[],
+        delegates_in_favor=[],
+        delegates_against=[],
+    )
+    for delegate in session.committee:
+        delegate.vote(vote, session)
+
+    passed = vote.evaluate()
+    vote.log(session.log, session.time)
+    log_activity(
+        session,
+        kind="vote",
+        summary=(
+            f"Vote {vote.id} on amendment {amendment.id}: "
+            f"{vote.favor_count} for, {vote.against_count} against, "
+            f"{vote.refraining_count} abstain — "
+            f"{'PASSED' if passed else 'REJECTED'}"
+        ),
+        ref_id=vote.id,
+    )
+    if passed:
+        amendment.apply()
+        session.log["resolutions"][amendment.target_resolution.id][
+            "operative_clauses"
+        ] = list(amendment.target_resolution.operative_clauses)
+        log_activity(
+            session,
+            kind="amendment_applied",
+            summary=(
+                f"Unfriendly amendment {amendment.id} applied to "
+                f"{amendment.target_resolution.id} "
+                f"({amendment.action}, clause {amendment.clause_target_id})"
+            ),
+            ref_id=amendment.id,
+        )
+    else:
+        amendment.status = "rejected"
+    save_state(session)
+
+
+def _gather_signatories(resolution: DraftResolution, session: MUN):
+    """At end of unmod, ask each non-sponsor delegate whether to sign."""
+    sponsors = set(resolution.sponsors)
+    for delegate in session.committee:
+        if delegate.country in sponsors:
+            continue
+        proposal = (
+            f"Resolution {resolution.id} '{resolution.title}' has been "
+            f"drafted with sponsors {sorted(sponsors)}.\n\n"
+            f"{resolution.present()}\n\n"
+            f"As {delegate.country}, would you like to sign this resolution "
+            f"as a signatory? Signing brings it to the floor without "
+            f"committing to support it. Decide based on your national "
+            f"interests and the current debate state."
+        )
+        decision = delegate.decide(proposal)
+        if decision == "yes":
+            resolution.signatories.append(delegate.country)
+    log_activity(
+        session,
+        kind="signatories_collected",
+        summary=(
+            f"{resolution.id} signatories: "
+            f"{', '.join(resolution.signatories) or '(none)'}"
+        ),
+        ref_id=resolution.id,
+    )
+
+
+def present_resolution(resolution: DraftResolution, session: MUN):
+    """Sponsors present the resolution to the committee, then each non-sponsor
+    delegate gives a short reaction. Reactions go into the activity log.
+    """
+    print(f" ======= Presentation of {resolution.id} ======= ")
+    print(resolution.present())
+    log_activity(
+        session,
+        kind="resolution_presented",
+        summary=(
+            f"{resolution.id} '{resolution.title}' presented to the committee "
+            f"(sponsors: {', '.join(resolution.sponsors)})"
+        ),
+        ref_id=resolution.id,
+    )
+
+    sponsors = set(resolution.sponsors)
+    for delegate in session.committee:
+        if delegate.country in sponsors:
+            continue
+        reaction_prompt = (
+            f"Draft resolution {resolution.id} has just been presented. "
+            f"Give a short reaction (one or two sentences) explaining whether "
+            f"your delegation supports it, opposes it, or wants amendments — "
+            f"and the main reason."
+        )
+        speech = delegate.make_speech(
+            topic_prompt=reaction_prompt,
+            speech_duration=80,
+            session=session,
+        )
+        print(f"{delegate.country}: {speech}")
+        log_activity(
+            session,
+            kind="speech",
+            summary=(
+                f"{delegate.country} reacted to {resolution.id}: "
+                f"{speech[:140]}{'...' if len(speech) > 140 else ''}"
+            ),
+            ref_id=resolution.id,
+        )
+    save_state(session)
+
+
 def general_debate(session: MUN):
 
     print("==== Gathering delegate motion claims ====")
@@ -429,18 +620,16 @@ def general_debate(session: MUN):
         motion_claims[delegate.country] = delegate_claim
     print(motion_claims)
 
-    proposed = {c: m for c, m in motion_claims.items() if m.get("type")}
+    proposed = {}
+    for country, raw in motion_claims.items():
+        clean, reason = validate_motion(raw)
+        if clean is None:
+            if raw and raw.get("type") is not None:
+                print(f"  dropping motion from {country}: {reason}")
+            continue
+        proposed[country] = clean
 
-    print("==== Chair filters valid motions ====")
-    print(f"Proposed motions: {proposed}")
-    keep = input(
-        "Comma-separated countries whose motions to keep (empty = all): >>>"
-    )
-    if keep.strip():
-        keep_set = {c.strip() for c in keep.split(",") if c.strip()}
-        valid_motions = {c: m for c, m in proposed.items() if c in keep_set}
-    else:
-        valid_motions = proposed
+    valid_motions = chair_filter_motions(proposed) if proposed else {}
 
     if len(valid_motions) == 0:
         print("No valid motions at this time, opening general speakers list default")
@@ -488,12 +677,48 @@ def general_debate(session: MUN):
         general_speakers_list(session)
 
     elif motion["type"] == "present_resolution":
-        pass
+        resolution_id = motion["parameters"]["resolution_id"]
+        resolution = next(
+            (r for r in session.resolutions if r.id == resolution_id), None
+        )
+        if resolution is None:
+            print(f"  resolution {resolution_id} not found, skipping presentation")
+        else:
+            present_resolution(resolution, session)
 
     elif motion["type"] == "vote_resolution":
         resolution_id = motion["parameters"]["resolution_id"]
         resolution = next(r for r in session.resolutions if r.id == resolution_id)
         vote_draft_resolution(resolution, session)
+
+    elif motion["type"] == "amendment":
+        params = motion["parameters"]
+        resolution = next(
+            (r for r in session.resolutions if r.id == params["resolution_id"]),
+            None,
+        )
+        if resolution is None:
+            print(f"  resolution {params['resolution_id']} not found, skipping amendment")
+        else:
+            amendment = Amendment(
+                id=session.next_id("A"),
+                target_resolution=resolution,
+                proposer=proposer,
+                action=params["action"],
+                clause_target_id=int(params["clause_id"]),
+                new_text=params.get("new_text", ""),
+            )
+            log_activity(
+                session,
+                kind="amendment_proposed",
+                summary=(
+                    f"Amendment {amendment.id} proposed by {proposer.country} "
+                    f"on {resolution.id} ({amendment.action}, clause "
+                    f"{amendment.clause_target_id})"
+                ),
+                ref_id=amendment.id,
+            )
+            process_amendment(amendment, session)
 
     elif motion["type"] == "end":
         print("======= End of the MUN session =======")
