@@ -3,8 +3,8 @@
         "committee_name": "UN General Assembly",
         "topic": "Evaluating the legality and consequences of preemptive military action against sovereign states in the context of escalating conflict involving the Islamic Republic of Iran.",
         "state": "START",
-        "starting_time": "2026-04-27T09:09:04.807623",
-        "current_time": "2026-04-27T09:09:04.809315"
+        "starting_time": "2026-04-27T09:13:13.052407",
+        "current_time": "2026-04-27T09:16:11.050879"
     },
     "committee": {
         "delegates": {
@@ -104,15 +104,7 @@
         "current_queue": [],
         "speeches": {}
     },
-    "moderated_caucuses": {},
-    "unmoderated_caucuses": {},
-    "resolutions": {},
-    "activity": [
-        {
-            "t": "2026-04-27T09:09:04",
-            "kind": "session_opened",
-            "summary": "Session opened on 'Evaluating the legality and consequences of preemptive military action against sovereign states in the context of escalating conflict involving the Islamic Republic of Iran.' with delegations: USA, Iran, Israel, Russia, China, France, United Kingdom, Saudi Arabia, UAE, Turkey, India, Brazil, Germany, South Africa, Japan"
-        }
-    ],
-    "votings": {}
-}
+    "moderated_caucuses": {
+        "MC1": {
+            "topic": "Evaluating the legality and consequences of preemptive military action against sovereign states in the context of escalating conflict involving the Islamic Republic of Iran.",
+            "proposer": 

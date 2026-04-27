@@ -2,7 +2,7 @@ from openai import OpenAI
 
 from cognition.parsing import safe_json_loads, LLMParseError
 
-MODEL = "gpt-5.3"
+MODEL = "gpt-4o-mini"
 MAX_TOKENS = 400
 PARSE_RETRIES = 1
 
