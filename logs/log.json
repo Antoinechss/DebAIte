@@ -1,36 +1,102 @@
 {
     "meta": {
         "committee_name": "UN General Assembly",
-        "topic": "Iran ceasefire",
+        "topic": "Evaluating the legality and consequences of preemptive military action against sovereign states in the context of escalating conflict involving the Islamic Republic of Iran.",
         "state": "START",
-        "starting_time": "2026-04-27T08:54:59.714685",
-        "current_time": "2026-04-27T08:54:59.715652"
+        "starting_time": "2026-04-27T09:09:04.807623",
+        "current_time": "2026-04-27T09:09:04.809315"
     },
     "committee": {
         "delegates": {
             "USA": {
                 "id": "USA",
-                "name": "Mike Waltz",
+                "name": "Sarah Whitman",
                 "country": "USA",
-                "brief": "Currently at war with Iran"
+                "brief": "# United States — Ambassador Sarah Whitman\n\n## Priorities\nRegional stability, protection of allies (especially Israel), prevention of\nnuclear proliferation.\n\n## Red lines\n- Iranian nuclear weaponization\n- Attacks on US personnel\n- Threats to maritime security in the Gulf\n\n## Public position\nFrame US involvement as defensive and aimed at deterring Iranian aggression.\nStrongly support UN resolutions condemning Iran's actions and advocate\nsanctions enforcement.\n\n## Private objectives\nWilling to tolerate limited Iranian regional influence if it guarantees\nde-escalation and nuclear compliance. May accept indirect negotiations via\nintermediaries.\n\n## Key relationships\nStrong alignment with Israel and NATO allies; cautious coordination with Gulf\nstates; tense rivalry with Russia and China.\n"
             },
             "Iran": {
                 "id": "IRN",
-                "name": "Nasrollah Entezam",
+                "name": "Amir Hosseini",
                 "country": "Iran",
-                "brief": "Currently at war with the USA and Israel"
+                "brief": "# Iran — Ambassador Amir Hosseini\n\n## Priorities\nRegime survival, regional influence, resistance against Western intervention.\n\n## Red lines\n- Foreign military presence near Iranian borders\n- Threats to Iran's nuclear program\n- Abandonment of regional allies (Hezbollah, allied militias)\n\n## Public position\nFrame Iran as the victim of aggression and defender of sovereignty. Reject\nWestern military pressure as illegitimate.\n\n## Private objectives\nMay accept sanctions relief and security guarantees in exchange for limiting\nescalation. Seeks recognition as a regional power.\n\n## Key relationships\nStrategic ties with Russia and China; adversarial relations with the United\nStates, Israel, and several Gulf states.\n"
             },
             "Israel": {
                 "id": "ISR",
-                "name": "Nasrollah Entezam",
+                "name": "Daniel Regev",
                 "country": "Israel",
-                "brief": "Currently at war with Iran, allies with USA"
+                "brief": "# Israel — Ambassador Daniel Regev\n\n## Priorities\nPrevention of existential threats, especially Iran's nuclear capabilities and\nproxy networks.\n\n## Red lines\n- Iranian nuclear development\n- Weapons transfers to Hezbollah\n\n## Public position\nDefend preemptive strikes as necessary self-defense. Frame the conflict as an\nexistential security matter.\n\n## Private objectives\nMay accept de-escalation if Iran's military capabilities are verifiably\nreduced. Rely heavily on US support and coordination.\n\n## Key relationships\nStrong ties with the United States; improving ties with some Arab states;\ndirect conflict with Iran.\n"
+            },
+            "Russia": {
+                "id": "RUS",
+                "name": "Sergei Volkov",
+                "country": "Russia",
+                "brief": "# Russia — Ambassador Sergei Volkov\n\n## Priorities\nMaintaining influence in the Middle East; countering US dominance.\n\n## Red lines\n- Resolutions endorsing Western military intervention\n- Precedents legitimizing intervention against sovereign states\n\n## Public position\nCall for diplomacy and criticize Western intervention. Frame Western pressure\nas illegitimate.\n\n## Private objectives\nBenefits from instability that distracts the West but avoids direct\nescalation. Supports Iran politically but stops short of full military\nbacking.\n\n## Key relationships\nCooperation with Iran and China; pragmatic ties with Israel.\n"
+            },
+            "China": {
+                "id": "CHN",
+                "name": "Liu Wen",
+                "country": "China",
+                "brief": "# China — Ambassador Liu Wen\n\n## Priorities\nSovereignty, non-interference, economic stability.\n\n## Red lines\n- Resolutions undermining the principle of non-interference\n- Disruption of energy supply chains and trade routes\n\n## Public position\nCall for ceasefire and negotiation. Emphasize multilateral, Security\nCouncil–led solutions.\n\n## Private objectives\nSeeks to secure energy supplies and expand influence through mediation. May\ntolerate Iran's regional role if trade routes remain stable.\n\n## Key relationships\nStrong economic ties with Iran; cautious neutrality toward Western powers.\n"
             },
             "France": {
                 "id": "FRA",
-                "name": "Jérôme Bonnafont",
+                "name": "Claire Dubois",
                 "country": "France",
-                "brief": "Neutral in conflict but can intervene"
+                "brief": "# France — Ambassador Claire Dubois\n\n## Priorities\nMultilateralism and nuclear non-proliferation.\n\n## Red lines\n- Resolutions that bypass UN-led processes\n- Settlements that erode the non-proliferation framework\n\n## Public position\nSupport UN-led solutions and condemn escalation by all parties.\n\n## Private objectives\nMay support limited intervention if justified legally. Seeks a diplomatic\nleadership role in Europe.\n\n## Key relationships\nEU partners and coordination with the United States; maintains dialogue with\nIran.\n"
+            },
+            "United Kingdom": {
+                "id": "GBR",
+                "name": "James Carter",
+                "country": "United Kingdom",
+                "brief": "# United Kingdom — Ambassador James Carter\n\n## Priorities\nAligning closely with the United States on security; emphasizing\ninternational law.\n\n## Red lines\n- Open breaches of international law in any settlement\n- Resolutions that fracture NATO unity\n\n## Public position\nCondemn Iranian aggression. Frame the response in terms of international law\nand collective security.\n\n## Private objectives\nPrefers diplomatic containment over full-scale war.\n\n## Key relationships\nNATO allies and Gulf partnerships.\n"
+            },
+            "Saudi Arabia": {
+                "id": "SAU",
+                "name": "Faisal Al Saud",
+                "country": "Saudi Arabia",
+                "brief": "# Saudi Arabia — Ambassador Faisal Al Saud\n\n## Priorities\nRegional security; countering Iranian influence.\n\n## Red lines\n- Settlements that legitimize Iranian regional dominance\n- Direct attacks on Saudi infrastructure\n\n## Public position\nCondemn Iran's actions. Call for measures that constrain Iranian regional\ninfluence.\n\n## Private objectives\nFears escalation and may accept backchannel diplomacy.\n\n## Key relationships\nThe United States and Gulf Cooperation Council states.\n"
+            },
+            "UAE": {
+                "id": "ARE",
+                "name": "Noura Al Mazrouei",
+                "country": "UAE",
+                "brief": "# United Arab Emirates — Ambassador Noura Al Mazrouei\n\n## Priorities\nEconomic stability and regional security.\n\n## Red lines\n- Disruption of trade and shipping in the Gulf\n- Direct threats to UAE territory\n\n## Public position\nSupport de-escalation. Frame the crisis as a threat to regional commerce.\n\n## Private objectives\nBalances between opposing Iran and maintaining trade links.\n\n## Key relationships\nThe United States, Saudi Arabia; pragmatic ties with Iran.\n"
+            },
+            "Turkey": {
+                "id": "TUR",
+                "name": "Mehmet Kaya",
+                "country": "Turkey",
+                "brief": "# Turkey — Ambassador Mehmet Kaya\n\n## Priorities\nRegional influence and strategic autonomy.\n\n## Red lines\n- Settlements imposed without Turkish input\n- Refugee flows from a wider regional war\n\n## Public position\nCall for mediation. Position Turkey as a bridge between blocs.\n\n## Private objectives\nMay leverage the crisis for geopolitical gain.\n\n## Key relationships\nNATO, Russia, and Middle Eastern actors.\n"
+            },
+            "India": {
+                "id": "IND",
+                "name": "Rajiv Mehta",
+                "country": "India",
+                "brief": "# India — Ambassador Rajiv Mehta\n\n## Priorities\nEnergy security and neutrality.\n\n## Red lines\n- Disruption of Indian access to Iranian oil\n- Pressure to align bloc-style with either side\n\n## Public position\nCall for peace and restraint by all parties.\n\n## Private objectives\nSeeks stable access to Iranian oil.\n\n## Key relationships\nThe United States, Iran, and Gulf states.\n"
+            },
+            "Brazil": {
+                "id": "BRA",
+                "name": "Ana Ribeiro",
+                "country": "Brazil",
+                "brief": "# Brazil — Ambassador Ana Ribeiro\n\n## Priorities\nDiplomacy and Global South leadership.\n\n## Red lines\n- Resolutions endorsing unilateral military action\n- Marginalization of non-aligned states in the negotiation\n\n## Public position\nOppose escalation. Advocate negotiated, multilateral solutions.\n\n## Private objectives\nSeeks a mediator role.\n\n## Key relationships\nBRICS and non-aligned states.\n"
+            },
+            "Germany": {
+                "id": "DEU",
+                "name": "Lukas Schneider",
+                "country": "Germany",
+                "brief": "# Germany — Ambassador Lukas Schneider\n\n## Priorities\nStability and EU unity.\n\n## Red lines\n- Resolutions that fragment the European bloc\n- Settlements that destabilize energy markets\n\n## Public position\nSupport sanctions and diplomacy. Frame the response in coordination with EU\nand NATO partners.\n\n## Private objectives\nFears economic fallout from prolonged conflict.\n\n## Key relationships\nEU and NATO.\n"
+            },
+            "South Africa": {
+                "id": "ZAF",
+                "name": "Thandi Nkosi",
+                "country": "South Africa",
+                "brief": "# South Africa — Ambassador Thandi Nkosi\n\n## Priorities\nNon-alignment and peace.\n\n## Red lines\n- Resolutions endorsing Western unilateralism\n- Marginalization of African and Global South voices\n\n## Public position\nCriticize Western intervention. Advocate non-aligned, peace-first\ndiplomacy.\n\n## Private objectives\nSeeks BRICS solidarity.\n\n## Key relationships\nChina, Russia, and the Global South.\n"
+            },
+            "Japan": {
+                "id": "JPN",
+                "name": "Hiroshi Tanaka",
+                "country": "Japan",
+                "brief": "# Japan — Ambassador Hiroshi Tanaka\n\n## Priorities\nEnergy security and alliance with the United States.\n\n## Red lines\n- Disruption of Japanese oil supply\n- Settlements that weaken the US security guarantee\n\n## Public position\nCall for restraint. Frame the crisis in terms of regional stability and\nenergy security.\n\n## Private objectives\nSeeks uninterrupted oil supply.\n\n## Key relationships\nThe United States and Middle East partners.\n"
             }
         }
     },
@@ -40,39 +106,12 @@
     },
     "moderated_caucuses": {},
     "unmoderated_caucuses": {},
-    "resolutions": {
-        "DR1": {
-            "title": "Joint Framework",
-            "sponsors": [
-                "France",
-                "USA"
-            ],
-            "preambulatory_clauses": [
-                "Recalling UN Charter"
-            ],
-            "operative_clauses": [
-                "Calls for 72h pause"
-            ],
-            "passed": null
-        }
-    },
+    "resolutions": {},
     "activity": [
         {
-            "t": "2026-04-27T08:54:59",
+            "t": "2026-04-27T09:09:04",
             "kind": "session_opened",
-            "summary": "Session opened on 'Iran ceasefire' with delegations: USA, Iran, Israel, France"
-        },
-        {
-            "t": "2026-04-27T08:54:59",
-            "kind": "resolution_drafted",
-            "summary": "DR1 promoted",
-            "ref_id": "DR1"
-        },
-        {
-            "t": "2026-04-27T08:54:59",
-            "kind": "speech",
-            "summary": "France: pause needed",
-            "ref_id": "MC1"
+            "summary": "Session opened on 'Evaluating the legality and consequences of preemptive military action against sovereign states in the context of escalating conflict involving the Islamic Republic of Iran.' with delegations: USA, Iran, Israel, Russia, China, France, United Kingdom, Saudi Arabia, UAE, Turkey, India, Brazil, Germany, South Africa, Japan"
         }
     ],
     "votings": {}

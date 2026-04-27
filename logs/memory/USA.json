@@ -1,23 +1,7 @@
 {
     "id": "USA",
     "country": "USA",
-    "brief": "Currently at war with Iran",
-    "bloc_history": [
-        {
-            "caucus_id": "UMC1",
-            "bloc_id": "B1",
-            "members": [
-                "USA",
-                "France"
-            ],
-            "ideas": [
-                "Joint observers"
-            ],
-            "agreements": [
-                "72h pause"
-            ],
-            "conflicts": []
-        }
-    ],
+    "brief": "# United States — Ambassador Sarah Whitman\n\n## Priorities\nRegional stability, protection of allies (especially Israel), prevention of\nnuclear proliferation.\n\n## Red lines\n- Iranian nuclear weaponization\n- Attacks on US personnel\n- Threats to maritime security in the Gulf\n\n## Public position\nFrame US involvement as defensive and aimed at deterring Iranian aggression.\nStrongly support UN resolutions condemning Iran's actions and advocate\nsanctions enforcement.\n\n## Private objectives\nWilling to tolerate limited Iranian regional influence if it guarantees\nde-escalation and nuclear compliance. May accept indirect negotiations via\nintermediaries.\n\n## Key relationships\nStrong alignment with Israel and NATO allies; cautious coordination with Gulf\nstates; tense rivalry with Russia and China.\n",
+    "bloc_history": [],
     "private_notes": []
 }

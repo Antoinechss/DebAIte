@@ -1,0 +1,9 @@
+{
+    "name": "pack_1",
+    "title": "Preemptive Action and the Iran Crisis",
+    "description": "A 15-delegation simulation evaluating the legality and consequences of preemptive military action against sovereign states, set in the context of an escalating conflict involving the Islamic Republic of Iran.",
+    "committee_size": 15,
+    "topic": "Evaluating the legality and consequences of preemptive military action against sovereign states in the context of escalating conflict involving the Islamic Republic of Iran.",
+    "tags": ["security", "non-proliferation", "international-law", "iran"],
+    "expected_runtime": "long: ~15 LLM calls per general_debate phase, more during caucuses"
+}
