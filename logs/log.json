@@ -3,8 +3,16 @@
         "committee_name": "UN General Assembly",
         "topic": "Evaluating the legality and consequences of preemptive military action against sovereign states in the context of escalating conflict involving the Islamic Republic of Iran.",
         "state": "START",
-        "starting_time": "2026-04-27T09:13:13.052407",
-        "current_time": "2026-04-27T09:16:11.050879"
+        "starting_time": "2026-04-27T16:34:12.651044",
+        "current_time": "2026-04-27T16:59:02.174106",
+        "counters": {
+            "P": 3,
+            "UMC": 1,
+            "DR": 3,
+            "A": 0,
+            "MC": 1,
+            "V": 0
+        }
     },
     "committee": {
         "delegates": {
@@ -106,5 +114,295 @@
     },
     "moderated_caucuses": {
         "MC1": {
+            "topic": "Evaluating the legality and consequences of preemptive military action against sovereign states in the context of escalating conflict involving the Islamic Republic of Iran",
+            "proposer": "China",
+            "num_speakers": 10,
+            "speech_duration": 250,
+            "speeches": {
+                "USA": "Honorable delegates, distinguished guests, I stand before you today representing the United States of America in this critical discussion regarding the legality and consequences of preemptive military action against sovereign states, particularly in the context of escalating tensions with the Islamic Republic of Iran.\n\nThe United States prioritizes regional stability and the protection of our allies, especially Israel, amidst the ongoing threats posed by Iran's aggressive posture and its pursuit of nuclear weaponization. Our national interests are clear: we must deter any Iranian actions that threaten our personnel, our allies, or maritime security in the Gulf region.\n\nWe firmly believe that while dialogue and diplomacy should always be the first avenues pursued, the concept of preemptive action cannot be dismissed outright when faced with imminent threats. It is essential that we uphold international law while simultaneously recognizing our responsibility to protect those who are at risk. \n\nThe United States supports UN resolutions condemning Iran's destabilizing actions and advocates for strict enforcement of sanctions designed to curb its nuclear ambitions. However, we are willing to explore avenues for indirect negotiations if they lead to de-escalation and compliance with nuclear non-proliferation agreements.\n\nTogether, we must strive for a balanced approach: ensuring that we stand firm against aggression while seeking peaceful resolutions that will lead to a more stable Middle East. Let us work collaboratively to address these pressing issues and avoid miscalculations that could lead to conflict. Thank you.",
+                "Iran": "Honorable delegates, I stand before you as the representative of the Islamic Republic of Iran to address the crucial issue of preemptive military action and its implications for our sovereignty. We reject the notion that any nation possesses the right to attack another based on perceived threats without concrete evidence. Iran has been unjustly portrayed as the aggressor, while it is in fact the victim of continuous provocations and unprovoked sanctions imposed by Western powers.\n\nThe concept of preemption undermines international law and the very principles enshrined in the United Nations Charter, which upholds state sovereignty and the right to self-defense. The actions of the United States and its allies are not only illegal; they threaten regional stability and peace. We have maintained our commitment to diplomatic solutions and dialogue, yet we remain resolute in our defense of our territory and interests.\n\nFurthermore, any military presence near our borders is a direct challenge to our national security, and we will respond decisively to protect our allies and our nuclear program. Our partnerships with nations like Russia and China represent a commitment to a multipolar world where aggression is met with unity and resilience.\n\nAs we engage in this discourse, let us reaffirm our dedication to peaceful resolution and mutual respect for sovereignty. Let us not allow the specter of war to overshadow the possibility of diplomacy. Thank you.",
+                "Israel": "Honorable delegates, esteemed colleagues, I speak today on behalf of the State of Israel regarding the pressing issue of preemptive military action in the context of the escalating threat posed by the Islamic Republic of Iran. As we gather here, we must acknowledge that Iran's nuclear ambitions and its support for proxy groups, such as Hezbollah, represent an existential threat not only to Israel but to the broader stability of the region. \n\nWe assert that the right to preemptive action is grounded in self-defense against imminent threats. Iran continues to defy international norms while advancing its nuclear program with the potential to destabilize an already volatile geopolitics. The concept of sovereignty cannot shield a state that actively seeks to harm others, and the international community bears the responsibility to safeguard its members from such aggression.\n\nIndeed, while we recognize the value of dialogue, we cannot afford to remain passive in the face of existential threats. Israel is prepared to take necessary actions to protect its citizens and ensure its security. At the same time, we welcome any verifiable measures that lead to a reduction of Iranian military capabilities. \n\nIn closing, let us work together to prioritize regional security and prevent Tehran's nuclear deviance from becoming a reality. The cost of inaction is far greater than the careful, proportionate response necessary to maintain peace. Thank you.",
+                "Russia": "Honorable delegates, as the representative of the Russian Federation, I wish to address the critical question of preemptive military action in the context of escalating tensions with the Islamic Republic of Iran. Russia stands firmly against the concept of preemption as a justification for military intervention. This approach undermines international law and sets a dangerous precedent that threatens the very foundation of state sovereignty.\n\nWe view the current pressures exerted by Western nations on Iran with grave concern. These actions risk igniting further instability in a region that is already fraught with tension. It is imperative that we seek diplomatic avenues to resolve these conflicts, rather than escalating them through military means. The prescriptions for intervention proposed by some delegates effectively legitimize aggression and compromise the principles enshrined in the United Nations Charter.\n\nRussia recognizes the right of nations to defend themselves against credible threats; however, we must distinguish between legitimate defense and unjustified aggression fueled by unfounded allegations. A responsible international community must prioritize dialogue and multilateral negotiations over unilateral military actions.\n\nFurthermore, we support a balanced approach that involves all relevant parties in discussions to address security and stability in the Middle East. Let us not succumb to the rhetoric of war but instead endeavor to create an environment where diplomatic solutions prevail. Unity and cooperation among nations, particularly those with vested interests in the region, will be pivotal in promoting peace and security. Thank you.",
+                "China": "Honorable delegates, I stand before you representing the People’s Republic of China to address the vital issue of preemptive military action concerning the escalating conflict involving the Islamic Republic of Iran. China holds a steadfast commitment to the principles of state sovereignty and non-interference in the internal affairs of nations. We firmly believe that preemptive military action breaches international law and threatens regional stability. \n\nIn the context of escalating tensions, we call for an immediate ceasefire and the resumption of diplomatic negotiations. True security can only be achieved through dialogue and understanding, not through military aggression. We also recognize the complexity surrounding Iran's position in the region and urge all parties to pursue multilateral solutions under the auspices of the United Nations Security Council. \n\nMoreover, it is vital to emphasize that any disruptions to energy supplies and trade routes resulting from military actions would have far-reaching, negative consequences for global economic stability. As a nation that values economic partnerships, we seek to ensure that our energy supply chains remain uninterrupted. \n\nLet us work cooperatively toward peaceful resolutions, reinforcing the importance of dialogue over conflict. The path to a stable Middle East lies not in preemption but in collective effort and mutual respect among sovereign nations. We must prioritize peace and stability for all. Thank you.",
+                "France": "Honorable delegates, I am Claire Dubois, representing France in this critical debate on preemptive military action regarding the Islamic Republic of Iran. France reaffirms its commitment to multilateralism and the importance of diplomatic solutions in addressing global security challenges. We believe that any consideration of military intervention must adhere to international law and respect the sovereignty of nations. \n\nThe prevailing tensions surrounding Iran's nuclear ambitions necessitate a collective approach, emphasizing the need for dialogue and cooperation rather than unilateral actions that may escalate conflicts. While we acknowledge the concerns of our partners regarding regional stability, we must resist the temptation to bypass the established UN-led processes, which are essential for maintaining a rules-based international order. \n\nFrance supports efforts to ensure Iran's compliance with non-proliferation agreements. We underscore the significance of continued diplomatic engagement, believing that only through constructive dialogue can we address the security concerns related to Iran’s nuclear program and mitigate the risks of military escalation. We encourage all parties to prioritize diplomatic avenues over confrontation. \n\nIn conclusion, let us work together to foster a climate of trust that favors peaceful resolution over aggression. France stands ready to play a leadership role in Europe, advocating for a balanced approach that prioritizes both security and diplomacy in the face of escalating tensions. Thank you.",
+                "Saudi Arabia": "Honorable delegates, as the representative of the Kingdom of Saudi Arabia, I stand before you to address the urgent issue of preemptive military action in the context of the rising tensions surrounding the Islamic Republic of Iran. Our region is facing unprecedented challenges due to Iran's destabilizing interventions and aggressive posturing, which threaten not only our national security but also the security of our allies.\n\nSaudi Arabia firmly condemns Iran's actions, which include supporting militia groups that undermine regional stability and pursuing a nuclear program that poses an existential threat to us and our neighbors. We believe that preemptive military action must be considered if it is the only means to protect our critical infrastructure and prevent Iran from extending its sphere of influence in the region.\n\nHowever, we advocate for a measured approach that prioritizes diplomatic efforts alongside security measures. Engaging in backchannel diplomacy is crucial for de-escalating tensions and fostering a dialogue that could lead to mutually agreeable resolutions. \n\nWe urge our partners and the international community to impose strict measures that constrain Iranian influence while keeping open the door for negotiations. We must demonstrate unity and resolve against aggression, ensuring that we remain vigilant in protecting our sovereignty and regional stability. \n\nLet us work together to create a framework that emphasizes cooperation and the necessity of safeguarding the security of all nations in the Middle East. Thank you."
+            }
+        }
+    },
+    "unmoderated_caucuses": {
+        "UMC1": {
             "topic": "Evaluating the legality and consequences of preemptive military action against sovereign states in the context of escalating conflict involving the Islamic Republic of Iran.",
-            "proposer": 
+            "proposer": "Iran",
+            "positions": {
+                "USA": "The United States strongly opposes preemptive military action against sovereign states unless there is an imminent threat, particularly concerning Iranian aggression, which directly impacts regional stability and allies' safety. Our red lines are clear: any Iranian movement toward nuclear weaponization, attacks on US personnel, or threats to maritime security in the Gulf are unacceptable. We prioritize diplomatic solutions, support sanctions enforcement, and remain willing to engage in indirect negotiations to ensure de-escalation and nuclear compliance.",
+                "Iran": "The Islamic Republic of Iran firmly opposes any preemptive military action against sovereign states, viewing it as a violation of international law and an affront to national sovereignty. We prioritize regime survival, regional influence, and the resistance against Western intervention. Our red lines include any foreign military presence near our borders, threats to our nuclear program, and the abandonment of our regional allies such as Hezbollah and allied militias. We stand as a victim of aggression and reject Western military pressure as illegitimate.",
+                "Israel": "Israel prioritizes the prevention of existential threats, particularly from Iran's nuclear ambitions and its support for proxy groups like Hezbollah. Our red lines include any advancements in Iranian nuclear development and weapons transfers to Hezbollah. We assert the necessity of preemptive military action as a legitimate exercise of self-defense against an imminent threat from Iran, framing this issue as critical for our national survival. In the context of the current debate, we are open to discussions of de-escalation, provided that Iran's military capabilities are verifiably reduced, particularly those related to nuclear development. We rely on strong coordination and support from the United States to address these concerns effectively.",
+                "Russia": "Russia firmly opposes any resolution endorsing preemptive military action against sovereign states, particularly in the context of Iran. We advocate for diplomacy and dialogue over military intervention, viewing Western pressure as illegitimate. Our priority is to maintain influence in the Middle East while countering US dominance, and we will not support any actions that set a precedent for intervention against sovereign nations.",
+                "China": "China prioritizes sovereignty and non-interference in the context of preemptive military action against Iran. We remain firm against any resolutions undermining these principles and are particularly cautious of actions that disrupt energy supply chains and trade routes. Our stance calls for a ceasefire and negotiations led by the Security Council, seeking stable regional dynamics while maintaining strong economic ties with Iran.",
+                "France": "France firmly believes in multilateralism and nuclear non-proliferation. We oppose any preemptive military action against sovereign states, including Iran, that bypasses UN-led processes and threatens to erode the non-proliferation framework. We advocate for diplomatic solutions and engagement with all parties to de-escalate tensions.",
+                "United Kingdom": "The United Kingdom condemns Iranian aggression and emphasizes that any response must adhere to international law and principles of collective security. We prioritize diplomatic containment over full-scale military action, maintaining NATO unity and avoiding breaches of international law.",
+                "Saudi Arabia": "Saudi Arabia strongly condemns Iran's actions that threaten regional security and stability. We emphasize the need for measures to constrain Iranian influence and prevent any settlements that legitimize their regional dominance. Direct attacks on Saudi infrastructure will not be tolerated. We seek to balance the necessity for dialogue and diplomacy with our paramount aim of protecting our sovereignty and regional allies.",
+                "UAE": "The United Arab Emirates supports de-escalation and the protection of economic stability in the region, prioritizing the prevention of disruptions to trade and shipping in the Gulf. We consider direct threats to UAE territory as red lines, and therefore advocate for diplomatic solutions rather than preemptive military actions.",
+                "Turkey": "Turkey calls for immediate mediation to address the tensions surrounding Iran and emphasizes the importance of respecting sovereign rights. We oppose any preemptive military action that could destabilize the region further, leading to potential refugee flows and unilateral settlements that do not consider Turkish interests. As a bridge between blocs, Turkey aims to leverage this situation to enhance regional stability and geopolitical standing while prioritizing its national security interests.",
+                "India": "India advocates for peace and restraint among all parties involved in the conflict with Iran. We prioritize energy security and maintain a neutral stance, firmly opposed to any disruption of our access to Iranian oil. We reject pressures to align with any bloc and seek stable and harmonious ties with both Iran and the Gulf states.",
+                "Brazil": "Brazil opposes unilateral military action and advocates for a multilateral, diplomatic resolution to the situation with Iran. We strongly believe in the importance of dialogue and engagement, prioritizing the perspectives of non-aligned states while ensuring no marginalization occurs in negotiations.",
+                "Germany": "Germany advocates for a diplomatic resolution to the conflict involving Iran, prioritizing stability and EU unity. We oppose any preemptive military action that undermines international law and risks further escalation. Resolutions must not fragment the European bloc or destabilize energy markets. Germany supports coordinated sanctions as a tool of diplomacy.",
+                "South Africa": "South Africa strongly opposes preemptive military action against sovereign states, advocating for non-aligned and peace-first diplomacy while emphasizing the need for dialogue and multilateral solutions. We reject resolutions that endorse Western unilateralism and the marginalization of African and Global South voices in this context.",
+                "Japan": "Japan calls for restraint in the context of preemptive military action against sovereign states, emphasizing the importance of regional stability and energy security. We prioritize the uninterrupted supply of oil and maintain our red lines against any disruption to Japanese oil supply or settlements that weaken the US security guarantee."
+            },
+            "blocs": {
+                "B1": [
+                    "USA",
+                    "Israel",
+                    "United Kingdom",
+                    "Saudi Arabia",
+                    "UAE",
+                    "Japan"
+                ],
+                "B2": [
+                    "Iran",
+                    "Russia",
+                    "China",
+                    "Turkey",
+                    "India",
+                    "Brazil",
+                    "South Africa"
+                ],
+                "B3": [
+                    "France",
+                    "Germany"
+                ]
+            }
+        }
+    },
+    "resolutions": {
+        "DR1": {
+            "title": "Working Paper on Addressing Iranian Nuclear Compliance and Regional Security",
+            "sponsors": [
+                "<framework.framework.Delegate object at 0x1083ae660>",
+                "<framework.framework.Delegate object at 0x1084151d0>",
+                "<framework.framework.Delegate object at 0x101569d00>",
+                "<framework.framework.Delegate object at 0x101569e10>",
+                "<framework.framework.Delegate object at 0x100ff2e50>",
+                "<framework.framework.Delegate object at 0x108363e10>"
+            ],
+            "preambulatory_clauses": [
+                "1. Recalling the necessity for collective action to ensure adherence to international law pertaining to military responses;",
+                "2. Emphasizing the importance of establishing verification mechanisms to monitor Iranian compliance with nuclear commitments;",
+                "3. Recognizing the critical need for multilateral dialogue to address concerns regarding Iranian nuclear activities and regional stability;",
+                "4. Acknowledging the various positions of member states regarding preemptive military action and diplomatic strategies in response to Iranian threats;"
+            ],
+            "operative_clauses": [
+                "1. Calls for the establishment of a robust verification mechanism to monitor Iranian compliance with nuclear commitments, ensuring that any military responses remain a last resort and adhere to international law;",
+                "2. Proposes the establishment of a multilateral task force involving key regional players to facilitate dialogue and ensure transparency regarding Iran's nuclear activities;",
+                "3. Urges member states to enhance intelligence-sharing initiatives to better understand Iranian military movements and intentions, supporting collective deterrence and regional stability;",
+                "4. Encourages the alignment of diplomatic and economic pressures on Iran to further diminish any military threats while safeguarding collective security interests in the region;",
+                "5. Affirms that any military actions taken against Iran should strictly adhere to international law and contain stringent accountability measures."
+            ],
+            "passed": null,
+            "signatories": [
+                "USA",
+                "Israel",
+                "Saudi Arabia"
+            ]
+        },
+        "DR2": {
+            "title": "Joint Statement on the Rejection of Preemptive Military Action and the Emphasis on Diplomacy",
+            "sponsors": [
+                "<framework.framework.Delegate object at 0x108415090>",
+                "<framework.framework.Delegate object at 0x1083a9cd0>",
+                "<framework.framework.Delegate object at 0x1083a9940>",
+                "<framework.framework.Delegate object at 0x108540a50>",
+                "<framework.framework.Delegate object at 0x1085236b0>",
+                "<framework.framework.Delegate object at 0x1085237a0>",
+                "<framework.framework.Delegate object at 0x10852f5b0>"
+            ],
+            "preambulatory_clauses": [
+                "1. Recognizing the significance of upholding international law and the principles of sovereignty and non-interference among states;",
+                "2. Emphasizing the importance of multilateral engagement and diplomatic dialogue in ensuring regional stability;",
+                "3. Condemning any foreign military presence near Iranian borders as a direct violation of sovereignty and security;",
+                "4. Acknowledging the necessity of preventing unilateral military actions that jeopardize regional stability."
+            ],
+            "operative_clauses": [
+                "1. Affirm the collective rejection of preemptive military action against sovereign states as a violation of international law;",
+                "2. Advocate for dialogue and diplomatic resolutions as the primary means to promote regional stability;",
+                "3. Reiterate the commitment to multilateral diplomatic solutions for addressing regional tensions;",
+                "4. Condemn any foreign military presence near Iranian borders and emphasize respect for sovereignty and territorial integrity;",
+                "5. Call for preserving the principles of international law, which prohibit unilateral military actions that destabilize the region."
+            ],
+            "passed": null,
+            "signatories": [
+                "Iran"
+            ]
+        },
+        "DR3": {
+            "title": "Draft Resolution on Diplomatic Resolutions and Coordinated Sanctions Regarding the Iranian Conflict",
+            "sponsors": [
+                "<framework.framework.Delegate object at 0x1083edb50>",
+                "<framework.framework.Delegate object at 0x10852ce50>"
+            ],
+            "preambulatory_clauses": [
+                "1. Recognizing the importance of diplomatic engagement in addressing the ongoing conflict involving Iran;",
+                "2. Emphasizing the necessity of adhering to international law to ensure stability and prevent unlawful military actions;",
+                "3. Acknowledging the commitment to multilateralism and the significance of coordinated responses to uphold the non-proliferation framework;"
+            ],
+            "operative_clauses": [
+                "1. Encourages a unified approach to coordinated sanctions as a diplomatic tool to promote stability and uphold the non-proliferation framework regarding Iran;",
+                "2. Affirms the ongoing support for diplomatic resolutions and multilateralism in addressing the crisis with Iran;",
+                "3. Calls for careful calibration of any sanctions to avoid exacerbating tensions and maintaining adherence to international law;",
+                "4. Underscores the importance of diplomatic channels in reducing tensions with Iran and preventing further escalation in the region."
+            ],
+            "passed": null,
+            "signatories": [
+                "USA",
+                "France",
+                "Saudi Arabia",
+                "Germany"
+            ]
+        }
+    },
+    "activity": [
+        {
+            "t": "2026-04-27T16:34:12",
+            "kind": "session_opened",
+            "summary": "Session opened on 'Evaluating the legality and consequences of preemptive military action against sovereign states in the context of escalating conflict involving the Islamic Republic of Iran.' with delegations: USA, Iran, Israel, Russia, China, France, United Kingdom, Saudi Arabia, UAE, Turkey, India, Brazil, Germany, South Africa, Japan"
+        },
+        {
+            "t": "2026-04-27T16:36:46",
+            "kind": "motion_passed",
+            "summary": "Motion passed: 'mod' by China (parameters: {'topic': 'Evaluating the legality and consequences of preemptive military action against sovereign states in the context of escalating conflict involving the Islamic Republic of Iran', 'num_speakers': 10, 'speech_duration': 250})"
+        },
+        {
+            "t": "2026-04-27T16:36:46",
+            "kind": "caucus_opened",
+            "summary": "MC1 (moderated) opened on 'Evaluating the legality and consequences of preemptive military action against sovereign states in the context of escalating conflict involving the Islamic Republic of Iran' — 10 speakers, 250s (proposer: China)",
+            "ref_id": "MC1"
+        },
+        {
+            "t": "2026-04-27T16:37:31",
+            "kind": "speech",
+            "summary": "USA spoke in MC1: Honorable delegates, distinguished guests, I stand before you today representing the United States of America in this critical discussion re...",
+            "ref_id": "MC1"
+        },
+        {
+            "t": "2026-04-27T16:37:39",
+            "kind": "speech",
+            "summary": "Iran spoke in MC1: Honorable delegates, I stand before you as the representative of the Islamic Republic of Iran to address the crucial issue of preemptive mil...",
+            "ref_id": "MC1"
+        },
+        {
+            "t": "2026-04-27T16:37:44",
+            "kind": "speech",
+            "summary": "Israel spoke in MC1: Honorable delegates, esteemed colleagues, I speak today on behalf of the State of Israel regarding the pressing issue of preemptive military...",
+            "ref_id": "MC1"
+        },
+        {
+            "t": "2026-04-27T16:37:51",
+            "kind": "speech",
+            "summary": "Russia spoke in MC1: Honorable delegates, as the representative of the Russian Federation, I wish to address the critical question of preemptive military action ...",
+            "ref_id": "MC1"
+        },
+        {
+            "t": "2026-04-27T16:37:56",
+            "kind": "speech",
+            "summary": "China spoke in MC1: Honorable delegates, I stand before you representing the People’s Republic of China to address the vital issue of preemptive military action...",
+            "ref_id": "MC1"
+        },
+        {
+            "t": "2026-04-27T16:38:04",
+            "kind": "speech",
+            "summary": "France spoke in MC1: Honorable delegates, I am Claire Dubois, representing France in this critical debate on preemptive military action regarding the Islamic Rep...",
+            "ref_id": "MC1"
+        },
+        {
+            "t": "2026-04-27T16:38:11",
+            "kind": "speech",
+            "summary": "Saudi Arabia spoke in MC1: Honorable delegates, as the representative of the Kingdom of Saudi Arabia, I stand before you to address the urgent issue of preemptive mili...",
+            "ref_id": "MC1"
+        },
+        {
+            "t": "2026-04-27T16:38:11",
+            "kind": "caucus_closed",
+            "summary": "MC1 closed — speakers: USA, Iran, Israel, Russia, China, France, Saudi Arabia",
+            "ref_id": "MC1"
+        },
+        {
+            "t": "2026-04-27T16:41:07",
+            "kind": "motion_passed",
+            "summary": "Motion passed: 'unmod' by Iran (parameters: {'topic': 'Evaluating the legality and consequences of preemptive military action against sovereign states in the context of escalating conflict involving the Islamic Republic of Iran.'})"
+        },
+        {
+            "t": "2026-04-27T16:41:07",
+            "kind": "caucus_opened",
+            "summary": "UMC1 (unmoderated) opened on 'Evaluating the legality and consequences of preemptive military action against sovereign states in the context of escalating conflict involving the Islamic Republic of Iran.' (proposer: Iran)",
+            "ref_id": "UMC1"
+        },
+        {
+            "t": "2026-04-27T16:44:02",
+            "kind": "blocs_formed",
+            "summary": "Blocs in UMC1: B1=[USA, Israel, Saudi Arabia, UAE, United Kingdom, Japan]; B2=[Iran, Russia, China, Turkey, India, Brazil, South Africa]; B3=[France, Germany]",
+            "ref_id": "UMC1"
+        },
+        {
+            "t": "2026-04-27T16:57:50",
+            "kind": "paper_built",
+            "summary": "P1 drafted by bloc B1: 'Working Paper on Addressing Iranian Nuclear Compliance and Regional Security' (sponsors: USA, Israel, United Kingdom, Saudi Arabia, UAE, Japan)",
+            "ref_id": "P1"
+        },
+        {
+            "t": "2026-04-27T16:57:58",
+            "kind": "paper_built",
+            "summary": "P2 drafted by bloc B2: 'Joint Statement on the Rejection of Preemptive Military Action and the Emphasis on Diplomacy' (sponsors: Iran, Russia, China, Turkey, India, Brazil, South Africa)",
+            "ref_id": "P2"
+        },
+        {
+            "t": "2026-04-27T16:58:03",
+            "kind": "paper_built",
+            "summary": "P3 drafted by bloc B3: 'Working Paper on Diplomatic Resolutions and Coordinated Sanctions Regarding the Iranian Conflict' (sponsors: France, Germany)",
+            "ref_id": "P3"
+        },
+        {
+            "t": "2026-04-27T16:58:12",
+            "kind": "resolution_drafted",
+            "summary": "DR1 promoted from P1: 'Working Paper on Addressing Iranian Nuclear Compliance and Regional Security' (sponsors: <framework.framework.Delegate object at 0x1083ae660>, <framework.framework.Delegate object at 0x1084151d0>, <framework.framework.Delegate object at 0x101569d00>, <framework.framework.Delegate object at 0x101569e10>, <framework.framework.Delegate object at 0x100ff2e50>, <framework.framework.Delegate object at 0x108363e10>)",
+            "ref_id": "DR1"
+        },
+        {
+            "t": "2026-04-27T16:58:21",
+            "kind": "signatories_collected",
+            "summary": "DR1 signatories: USA, Israel, Saudi Arabia",
+            "ref_id": "DR1"
+        },
+        {
+            "t": "2026-04-27T16:58:32",
+            "kind": "resolution_drafted",
+            "summary": "DR2 promoted from P2: 'Joint Statement on the Rejection of Preemptive Military Action and the Emphasis on Diplomacy' (sponsors: <framework.framework.Delegate object at 0x108415090>, <framework.framework.Delegate object at 0x1083a9cd0>, <framework.framework.Delegate object at 0x1083a9940>, <framework.framework.Delegate object at 0x108540a50>, <framework.framework.Delegate object at 0x1085236b0>, <framework.framework.Delegate object at 0x1085237a0>, <framework.framework.Delegate object at 0x10852f5b0>)",
+            "ref_id": "DR2"
+        },
+        {
+            "t": "2026-04-27T16:58:43",
+            "kind": "signatories_collected",
+            "summary": "DR2 signatories: Iran",
+            "ref_id": "DR2"
+        },
+        {
+            "t": "2026-04-27T16:58:51",
+            "kind": "resolution_drafted",
+            "summary": "DR3 promoted from P3: 'Draft Resolution on Diplomatic Resolutions and Coordinated Sanctions Regarding the Iranian Conflict' (sponsors: <framework.framework.Delegate object at 0x1083edb50>, <framework.framework.Delegate object at 0x10852ce50>)",
+            "ref_id": "DR3"
+        },
+        {
+            "t": "2026-04-27T16:59:02",
+            "kind": "signatories_collected",
+            "summary": "DR3 signatories: USA, France, Saudi Arabia, Germany",
+            "ref_id": "DR3"
+        },
+        {
+            "t": "2026-04-27T16:59:02",
+            "kind": "caucus_closed",
+            "summary": "UMC1 closed — papers: 3, resolutions promoted: 3",
+            "ref_id": "UMC1"
+        }
+    ],
+    "votings": {}
+}

@@ -66,8 +66,93 @@ def init_log(session):
     )
 
 
+def load_session(committee, agenda=None):
+    """Rebuild an MUN session from logs/log.json — resume from where we left off.
+
+    Per-delegate memory files and the passed-resolutions file persist
+    independently and are not touched here (they already live on disk).
+
+    Resume granularity is between general_debate iterations: any in-flight
+    caucus or vote at the time of the previous crash is discarded. The
+    session's structured state (resolutions, GSL queue, counters, state)
+    is reconstructed from the log.
+    """
+    from datetime import datetime
+    from framework.mun import MUN
+    from framework.framework import DraftResolution
+
+    if not os.path.exists(LOG_PATH):
+        raise FileNotFoundError(
+            f"No log at {LOG_PATH}; nothing to resume from."
+        )
+    with open(LOG_PATH) as f:
+        log = json.load(f)
+
+    title = log["meta"]["topic"]
+    expected_committee = set(log["committee"]["delegates"].keys())
+    actual_committee = {d.country for d in committee}
+    if expected_committee != actual_committee:
+        raise ValueError(
+            "Committee mismatch — cannot resume.\n"
+            f"  log expects: {sorted(expected_committee)}\n"
+            f"  pack provides: {sorted(actual_committee)}"
+        )
+
+    state = log["meta"].get("state", "START")
+    session = MUN(
+        time=datetime.now(),
+        title=title,
+        committee=committee,
+        agenda=agenda or [],
+        log=log,
+        state=state,
+    )
+
+    saved_counters = log["meta"].get("counters")
+    if saved_counters:
+        for prefix, value in saved_counters.items():
+            if prefix in session._counters:
+                session._counters[prefix] = value
+
+    for rid, r in log.get("resolutions", {}).items():
+        resolution = DraftResolution(id=rid)
+        resolution.title = r.get("title", "")
+        resolution.sponsors = list(r.get("sponsors", []))
+        resolution.signatories = list(r.get("signatories", []))
+        resolution.preambulatory_clauses = list(
+            r.get("preambulatory_clauses", [])
+        )
+        resolution.operative_clauses = list(r.get("operative_clauses", []))
+        resolution.passed = r.get("passed")
+        session.resolutions.append(resolution)
+
+    by_country = {d.country: d for d in committee}
+    queue_countries = log.get("general_speakers_list", {}).get(
+        "current_queue", []
+    )
+    for country in queue_countries:
+        if country in by_country:
+            session.general_speakers_list.queue.append(by_country[country])
+    session.general_speakers_list.speeches = dict(
+        log.get("general_speakers_list", {}).get("speeches", {})
+    )
+
+    log_activity(
+        session,
+        kind="session_resumed",
+        summary=(
+            f"Session resumed — {len(session.resolutions)} resolution(s) "
+            f"on the table, GSL queue: "
+            f"{[d.country for d in session.general_speakers_list.queue]}"
+        ),
+    )
+    return session
+
+
 def save_state(session):
     session.log["meta"]["current_time"] = datetime.now().isoformat()
+    session.log["meta"]["state"] = session.state
+    session.log["meta"]["counters"] = dict(session._counters)
     with open(LOG_PATH, "w") as f:
         json.dump(session.log, f, indent=4, ensure_ascii=False)
 

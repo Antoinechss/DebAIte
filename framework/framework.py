@@ -181,8 +181,8 @@ class SpeakersList:
     
     def to_dict(self):
         return {
-            "queue": self.queue,
-            "speeches": self.speeches
+            "queue": [d.country for d in self.queue],
+            "speeches": self.speeches,
         }
 
 
@@ -214,10 +214,10 @@ class ModeratedCaucus:
     def to_dict(self):
         return {
             "topic": self.topic,
-            "proposer": self.proposer,
+            "proposer": self.proposer.country,
             "num_speakers": self.num_speakers,
             "speech_duration": self.speech_duration,
-            "speeches": self.speeches
+            "speeches": self.speeches,
         }
 
 
